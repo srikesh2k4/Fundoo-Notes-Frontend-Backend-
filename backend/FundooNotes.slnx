@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="BusinessLayer/BusinessLayer.csproj" />
+  <Project Path="DataBaseLayer/DataBaseLayer.csproj" />
+  <Project Path="FundooNotes/FundooNotes.csproj" />
+  <Project Path="ModelLayer/ModelLayer.csproj" />
+  <Project Path="Testing/Testing.csproj" />
+</Solution>
