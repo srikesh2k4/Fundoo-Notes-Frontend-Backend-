@@ -1,0 +1,277 @@
+@use '../../../../../styles/mixins' as *;
+
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  background-color: #fff;
+  padding: 24px;
+}
+
+.main-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 450px;
+  padding: 48px 40px 36px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  @media (max-width: 480px) {
+    padding: 32px 24px 24px;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.logo-div {
+  text-align: center;
+  margin-bottom: 16px;
+
+  .google-logo {
+    width: 75px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 8px;
+
+  h3 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #202124;
+    margin: 0;
+    line-height: 1.3333;
+  }
+}
+
+.use-account-text {
+  text-align: center;
+  margin-bottom: 26px;
+
+  p {
+    font-size: 16px;
+    color: #202124;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Message boxes
+.message-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.4286;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  &.error {
+    background-color: #fce8e6;
+    color: #c5221f;
+    border: 1px solid #f4c7c3;
+
+    svg {
+      fill: #c5221f;
+    }
+  }
+}
+
+.email-input-feild {
+  margin-bottom: 20px;
+  @include floating-label-input(#1a73e8);
+}
+
+.password-input-feild {
+  margin-bottom: 12px;
+  @include floating-label-input(#1a73e8);
+}
+
+.show-password {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    margin: 0 12px 0 0;
+    cursor: pointer;
+    accent-color: #1a73e8;
+    flex-shrink: 0;
+
+    &:focus {
+      outline: 2px solid #1a73e8;
+      outline-offset: 2px;
+    }
+  }
+
+  label {
+    font-size: 14px;
+    color: #202124;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.4286;
+  }
+}
+
+.forgot-password-div {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 28px;
+
+  a {
+    @include link-style;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1.4286;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 2px solid #1a73e8;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+}
+
+.botton-div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  .left-div-buttom-create-account {
+    a {
+      @include link-style;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4286;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &:focus {
+        outline: 2px solid #1a73e8;
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .right-login-button {
+    button {
+      @include button-style;
+      min-width: 90px;
+      height: 36px;
+      padding: 0 24px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.4286;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 1px 2px rgba(26, 115, 232, 0.45),
+                    0 1px 3px 1px rgba(26, 115, 232, 0.3);
+      }
+
+      &:active:not(:disabled) {
+        box-shadow: 0 1px 2px rgba(26, 115, 232, 0.45);
+      }
+
+      &:focus {
+        outline: 2px solid #1a73e8;
+        outline-offset: 2px;
+      }
+
+      &:disabled {
+        background-color: #f8f9fa;
+        color: #80868b;
+        cursor: not-allowed;
+        box-shadow: none;
+        border: 1px solid #dadce0;
+      }
+    }
+  }
+}
+
+// Spinner
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .botton-div {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .left-div-buttom-create-account {
+      order: 2;
+      text-align: center;
+    }
+
+    .right-login-button {
+      order: 1;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

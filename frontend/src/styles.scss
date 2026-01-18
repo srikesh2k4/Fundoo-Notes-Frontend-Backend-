@@ -1,0 +1,515 @@
+// ============================================================================
+// Global Styles - Google Keep Clone
+// ============================================================================
+
+// Theme Variables - Light Mode (Default)
+:root,
+[data-theme="light"] {
+  // Background colors
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f3f4;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active: rgba(0, 0, 0, 0.08);
+  --bg-card: #ffffff;
+  --bg-search: #f1f3f4;
+
+  // Text colors
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-hint: #80868b;
+
+  // Border colors
+  --border-color: #e0e0e0;
+  --border-light: #dadce0;
+
+  // Brand colors
+  --color-accent: #1a73e8;
+  --color-accent-hover: #1557b0;
+  --color-yellow: #fbbc04;
+  --color-yellow-bg: #feefc3;
+
+  // Shadow
+  --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --shadow-md: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  --shadow-lg: 0 4px 8px 3px rgba(60, 64, 67, 0.15), 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+
+  // Note colors (light mode)
+  --note-default: #ffffff;
+  --note-coral: #faafa8;
+  --note-peach: #f39f76;
+  --note-sand: #fff8b8;
+  --note-mint: #e2f6d3;
+  --note-sage: #b4ddd3;
+  --note-fog: #d4e4ed;
+  --note-storm: #aeccdc;
+  --note-dusk: #d3bfdb;
+  --note-blossom: #f6e2dd;
+  --note-clay: #e9e3d4;
+  --note-chalk: #efeff1;
+
+  // Icon colors
+  --icon-color: #5f6368;
+  --icon-hover: #202124;
+}
+
+// Theme Variables - Dark Mode
+[data-theme="dark"] {
+  // Background colors
+  --bg-primary: #202124;
+  --bg-secondary: #2d2e30;
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --bg-active: rgba(255, 255, 255, 0.12);
+  --bg-card: #2d2e30;
+  --bg-search: #525355;
+
+  // Text colors
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-hint: #80868b;
+
+  // Border colors
+  --border-color: #5f6368;
+  --border-light: #3c4043;
+
+  // Brand colors
+  --color-accent: #8ab4f8;
+  --color-accent-hover: #aecbfa;
+  --color-yellow: #fbbc04;
+  --color-yellow-bg: #41331c;
+
+  // Shadow
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 2px 6px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 8px 3px rgba(0, 0, 0, 0.3), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+
+  // Note colors (dark mode)
+  --note-default: #2d2e30;
+  --note-coral: #77172e;
+  --note-peach: #692b17;
+  --note-sand: #7c4a03;
+  --note-mint: #264d3b;
+  --note-sage: #0c625d;
+  --note-fog: #256377;
+  --note-storm: #284255;
+  --note-dusk: #472e5b;
+  --note-blossom: #6c394f;
+  --note-clay: #4b443a;
+  --note-chalk: #3c3f43;
+
+  // Icon colors
+  --icon-color: #9aa0a6;
+  --icon-hover: #e8eaed;
+}
+
+// CSS Reset & Box Sizing
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Root HTML & Body
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+html {
+  // Responsive font sizing - Use rem instead of vh for better accessibility
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+}
+
+body {
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  // Prevent iOS zoom on input focus
+  @media (max-width: 768px) {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+// Focus visible styles (for accessibility)
+*:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Remove default focus outline for mouse users
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Improve link styling
+a {
+  color: #1a73e8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: #1557b0;
+  }
+}
+
+// Button reset
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// Input reset
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+// Remove input spinner for number inputs
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+// Image optimization
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// SVG optimization
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// List reset
+ul,
+ol {
+  list-style: none;
+}
+
+// Table reset
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+// Paragraph spacing
+p {
+  margin: 0;
+}
+
+// Custom scrollbar styles
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// Firefox scrollbar
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+// Selection color
+::selection {
+  background-color: rgba(26, 115, 232, 0.3);
+  color: #202124;
+}
+
+::-moz-selection {
+  background-color: rgba(26, 115, 232, 0.3);
+  color: #202124;
+}
+
+// Utility Classes
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Loading spinner animation (global)
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+// Reduce motion for users who prefer it
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Dark mode support (optional - for future implementation)
+@media (prefers-color-scheme: dark) {
+  // Keep commented out until dark mode is implemented
+  // body {
+  //   background-color: #202124;
+  //   color: #e8eaed;
+  // }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor !important;
+  }
+
+  button,
+  a {
+    text-decoration: underline;
+  }
+}
+
+// Print styles
+@media print {
+  body {
+    background-color: #fff;
+    color: #000;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  button {
+    display: none;
+  }
+
+  // Remove shadows and transitions for print
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+// App root styling
+app-root {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+}
+
+// Router outlet styling
+router-outlet {
+  display: none;
+}
+
+// Loading state
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #fff;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f3f3;
+    border-top-color: #fbbc04;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+// Toast/Snackbar container
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+  }
+}
+
+// Modal overlay base
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+}
+
+// Prevent body scroll when modal is open
+body.modal-open {
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    width: 100%;
+  }
+}
+
+// Skip to main content link (accessibility)
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: #1a73e8;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 9999;
+
+  &:focus {
+    top: 0;
+  }
+}

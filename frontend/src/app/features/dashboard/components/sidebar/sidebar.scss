@@ -1,0 +1,429 @@
+// ================= VARIABLES =================
+$sidebar-width-collapsed: 80px;
+$sidebar-width-expanded: 280px;
+
+$color-hover: #feefc3;
+$color-active: #feefc3;
+$color-focus: #1a73e8;
+$color-overlay: rgba(0, 0, 0, 0.6);
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-bg: #fff;
+$color-button-hover: rgba(0, 0, 0, 0.08);
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+$border-radius: 25px;
+$border-radius-md: 8px;
+$border-radius-full: 50%;
+
+$transition-fast: 0.2s ease;
+$transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+$header-height: 64px;
+$nav-item-height: 48px;
+
+$z-index-sidebar: 100;
+$z-index-overlay: 1000;
+
+// ================= SIDEBAR =================
+.sidebar {
+  width: $sidebar-width-collapsed;
+  height: calc(100vh - $header-height);
+  background-color: $color-bg;
+  border-right: 1px solid $color-border;
+  position: fixed;
+  top: $header-height;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  transition: width $transition-medium;
+  z-index: $z-index-sidebar;
+
+  &.expanded {
+    width: $sidebar-width-expanded;
+
+    .footer-link {
+      display: block;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: $sidebar-width-expanded;
+    transform: translateX(-100%);
+    border-right: none;
+    transition: transform $transition-medium;
+
+    &.expanded {
+      transform: translateX(0);
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// ================= NAV =================
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-sm 0;
+  overflow-y: auto;
+}
+
+// ================= NAV ITEM =================
+.nav-item {
+  display: flex;
+  align-items: center;
+  height: $nav-item-height;
+  margin: 0 $spacing-sm $spacing-xs;
+  padding: 0;
+  border-radius: $border-radius;
+  color: $color-text;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  justify-content: center;
+  text-decoration: none;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &.active {
+    background-color: $color-active;
+  }
+
+  /* Expanded sidebar */
+  .sidebar.expanded & {
+    justify-content: flex-start;
+    padding: 0 $spacing-md;
+  }
+}
+
+// ================= ICON =================
+.nav-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $color-text;
+  }
+
+  .sidebar.expanded & {
+    margin-right: 16px;
+  }
+
+  .sidebar:not(.expanded) & {
+    margin-right: 0;
+  }
+}
+
+// ================= TEXT =================
+.nav-text {
+  font-size: 14px;
+  color: $color-text;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width $transition-medium, opacity $transition-fast;
+
+  .sidebar.expanded & {
+    max-width: 200px;
+    opacity: 1;
+  }
+}
+
+// ================= COLLAPSED FIX (IMPORTANT) =================
+.sidebar:not(.expanded) {
+  .nav-item {
+    width: 48px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+  }
+}
+
+// ================= DIVIDER =================
+.nav-divider {
+  height: 1px;
+  background-color: $color-border;
+  margin: $spacing-sm $spacing-md;
+}
+
+// ================= FOOTER =================
+.sidebar-footer {
+  padding: $spacing-lg;
+  border-top: 1px solid $color-border;
+}
+
+.footer-link {
+  font-size: 12px;
+  color: $color-text-secondary;
+  display: none;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    color: $color-text;
+  }
+}
+
+// ================= DIALOG =================
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-overlay;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.edit-labels-dialog {
+  background: $color-bg;
+  width: 100%;
+  max-width: 360px;
+  max-height: 80vh;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dialog-header {
+  padding: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: $color-text;
+    line-height: 1.5;
+  }
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md 0;
+}
+
+.dialog-footer {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.done-btn {
+  background: none;
+  border: none;
+  padding: $spacing-sm $spacing-lg;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color $transition-fast;
+  font-family: 'Roboto', Arial, sans-serif;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+// ================= LABEL INPUT ROW =================
+.label-input-row {
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-lg;
+  margin-bottom: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.label-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid $color-border;
+  padding: $spacing-sm 0;
+  font-size: 14px;
+  color: $color-text;
+  outline: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: transparent;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    border-bottom-color: $color-focus;
+  }
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: $spacing-sm;
+  cursor: pointer;
+  border-radius: $border-radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition-fast;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: $color-text-secondary;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ================= LABELS LIST =================
+.labels-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-lg;
+  gap: $spacing-md;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.delete-btn {
+  opacity: 0;
+
+  .label-row:hover & {
+    opacity: 1;
+  }
+
+  svg {
+    fill: $color-text-secondary;
+  }
+}
+
+.label-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: $color-text-secondary;
+  }
+}
+
+.label-name {
+  flex: 1;
+  font-size: 14px;
+  color: $color-text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label-edit-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid $color-focus;
+  padding: 4px 0;
+  font-size: 14px;
+  color: $color-text;
+  outline: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: transparent;
+}
+
+.edit-btn {
+  opacity: 0;
+
+  .label-row:hover & {
+    opacity: 1;
+  }
+}
+
+.check-btn {
+  svg {
+    fill: $color-text;
+  }
+}
+
+// ================= ACCESSIBILITY =================
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media print {
+  .sidebar {
+    display: none;
+  }
+}

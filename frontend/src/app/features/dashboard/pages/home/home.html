@@ -1,0 +1,17 @@
+<div class="home-container">
+  <app-navbar
+    [isGridView]="isGridView()"
+    (menuToggle)="toggleSidebar()"
+    (searchChange)="onSearchChange($event)"
+    (viewModeChange)="onViewModeChange($event)">
+  </app-navbar>
+
+  <div class="home-body">
+    <app-sidebar [isExpanded]="sidebarExpanded()"></app-sidebar>
+    <app-main-content
+      [sidebarExpanded]="sidebarExpanded()"
+      [isGridView]="isGridView()"
+      [searchQuery]="searchQuery()">
+    </app-main-content>
+  </div>
+</div>

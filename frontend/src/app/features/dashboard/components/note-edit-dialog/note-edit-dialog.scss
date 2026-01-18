@@ -1,0 +1,752 @@
+// Variables
+$color-white: #fff;
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-overlay: rgba(0, 0, 0, 0.6);
+$color-hover: rgba(0, 0, 0, 0.08);
+$color-focus: #1a73e8;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+$border-radius: 8px;
+$border-radius-sm: 4px;
+$border-radius-pill: 12px;
+$border-radius-full: 50%;
+
+$transition-fast: 0.2s ease;
+$transition-transform: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+$shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
+$shadow-elevated: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+
+$z-index-overlay: 1000;
+$z-index-pin: 1;
+$z-index-dropdown: 100;
+
+// Dialog Overlay
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-overlay;
+  padding: $spacing-xl;
+  animation: overlayFadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+
+  @media (max-width: 768px) {
+    padding: 0;
+    align-items: flex-start;
+  }
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dialog Container
+.note-edit-dialog {
+  background: $color-white;
+  border-radius: $border-radius;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: visible;
+  box-shadow: $shadow-dialog;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  animation: dialogSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    max-height: 100vh;
+    min-height: 100vh;
+    border-radius: 0;
+    animation: dialogSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dialogSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+// Pin Button
+.pin-btn {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: $border-radius-full;
+  transition: background-color $transition-fast;
+  z-index: $z-index-pin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &.pinned svg {
+    fill: $color-text;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $color-text-secondary;
+    transition: fill $transition-fast;
+  }
+}
+
+// Dialog Content
+.dialog-content {
+  padding: $spacing-lg;
+  padding-right: 48px;
+  padding-top: 20px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-lg;
+    padding-right: 48px;
+  }
+}
+
+// Input Fields
+.edit-title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 22px;
+  font-weight: 500;
+  color: $color-text;
+  margin-bottom: $spacing-lg;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: transparent;
+  line-height: 1.4;
+  padding: 0;
+
+  &::placeholder {
+    color: $color-text-secondary;
+    font-weight: 400;
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.edit-content-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: $color-text;
+  resize: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+  min-height: 100px;
+  max-height: 400px;
+  background: transparent;
+  padding: 0;
+
+  &::placeholder {
+    color: $color-text-secondary;
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 150px;
+  }
+}
+
+// Labels Section
+.note-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 $spacing-lg $spacing-md;
+  margin-top: $spacing-sm;
+
+  @media (max-width: 768px) {
+    padding: 0 $spacing-lg $spacing-sm;
+  }
+}
+
+.label-chip {
+  background-color: $color-hover;
+  border-radius: $border-radius-pill;
+  padding: 4px $spacing-md;
+  font-size: 11px;
+  color: $color-text;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  line-height: 1.4;
+  transition: background-color $transition-fast;
+  max-width: 100%;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .label-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .label-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-full;
+    transition: background-color $transition-fast;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-focus;
+      outline-offset: 1px;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+      fill: $color-text-secondary;
+    }
+  }
+}
+
+// Dialog Footer
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid transparent;
+  flex-shrink: 0;
+  gap: $spacing-md;
+  position: relative;
+  overflow: visible;
+
+  @media (max-width: 768px) {
+    padding: $spacing-sm $spacing-lg;
+    flex-wrap: wrap;
+  }
+}
+
+// Action Icons
+.action-icons {
+  display: flex;
+  position: relative;
+  overflow: visible;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    gap: 2px;
+  }
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: $border-radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition-fast;
+  position: relative;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: $color-text;
+    opacity: 0.71;
+    transition: opacity $transition-fast;
+  }
+
+  &:hover:not(:disabled) svg {
+    opacity: 1;
+  }
+}
+
+// Color Picker
+.color-picker-container {
+  position: relative;
+}
+
+.color-picker {
+  position: absolute;
+  bottom: calc(100% + $spacing-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $shadow-elevated;
+  padding: $spacing-sm;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  z-index: $z-index-dropdown;
+  animation: popupFadeIn 0.15s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid $color-white;
+    filter: drop-shadow(0 2px 1px rgba(60, 64, 67, 0.15));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(5, 1fr);
+    gap: $spacing-xs;
+  }
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.color-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-full;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color $transition-fast, transform $transition-transform;
+  position: relative;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    border-color: $color-focus;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: $border-radius-full;
+      background-color: $color-focus;
+    }
+  }
+
+  &:first-child {
+    border: 2px solid $color-border;
+    background-color: $color-white;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: $color-text;
+  }
+
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// More Menu
+.more-menu-container {
+  position: relative;
+  z-index: 10;
+}
+
+.more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $shadow-elevated;
+  padding: 8px 0;
+  min-width: 168px;
+  z-index: 1001;
+  animation: popupFadeDown 0.15s ease-out;
+}
+
+.menu-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: $color-text;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: -2px;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+@keyframes popupFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Close Button
+.close-btn {
+  background: none;
+  border: none;
+  padding: $spacing-sm $spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+  border-radius: $border-radius-sm;
+  transition: background-color $transition-fast;
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-sm $spacing-lg;
+  }
+}
+
+// Background colors for dialog
+.note-edit-dialog {
+  &[data-color="default"] {
+    background-color: $color-white;
+  }
+
+  &[data-color="red"] {
+    background-color: #f28b82;
+  }
+
+  &[data-color="orange"] {
+    background-color: #fbbc04;
+  }
+
+  &[data-color="yellow"] {
+    background-color: #fff475;
+  }
+
+  &[data-color="green"] {
+    background-color: #ccff90;
+  }
+
+  &[data-color="teal"] {
+    background-color: #a7ffeb;
+  }
+
+  &[data-color="blue"] {
+    background-color: #cbf0f8;
+  }
+
+  &[data-color="purple"] {
+    background-color: #d7aefb;
+  }
+
+  &[data-color="pink"] {
+    background-color: #fdcfe8;
+  }
+
+  &[data-color="brown"] {
+    background-color: #e6c9a8;
+  }
+
+  &[data-color="gray"] {
+    background-color: #e8eaed;
+  }
+}
+
+// Label Picker (if needed in dialog)
+.label-picker-container {
+  position: relative;
+}
+
+.label-picker {
+  position: absolute;
+  bottom: calc(100% + $spacing-sm);
+  right: 0;
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-elevated;
+  min-width: 220px;
+  max-width: 300px;
+  z-index: $z-index-dropdown;
+  animation: popupFadeIn 0.15s ease-out;
+}
+
+.label-picker-header {
+  padding: $spacing-md $spacing-lg;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text;
+  border-bottom: 1px solid $color-border;
+  line-height: 1.5;
+}
+
+.label-picker-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: $spacing-sm 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.label-picker-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: 10px $spacing-lg;
+  cursor: pointer;
+  font-size: 14px;
+  color: $color-text;
+  transition: background-color $transition-fast;
+  line-height: 1.5;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: $color-focus;
+    flex-shrink: 0;
+
+    &:focus-visible {
+      outline: 2px solid $color-focus;
+      outline-offset: 2px;
+    }
+  }
+
+  label {
+    cursor: pointer;
+    flex: 1;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Accessibility - Trap focus within dialog
+.dialog-overlay {
+  &:focus {
+    outline: none;
+  }
+}

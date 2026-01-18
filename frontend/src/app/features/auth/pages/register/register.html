@@ -1,0 +1,201 @@
+<div class="outer-div">
+  <div class="main-div">
+    <!-- Registration Step -->
+    <div class="left-div" *ngIf="currentStep() === 'register'">
+      <div class="logo-div">
+        <img
+          class="google-logo"
+          src="https://1000logos.net/wp-content/uploads/2021/05/Google-logo.png"
+          alt="Google"
+        />
+      </div>
+      <div class="header-div">
+        <h3>Create your Google Account</h3>
+      </div>
+
+      <!-- Error/Success Messages -->
+      <div class="message-box error" *ngIf="errorMessage()">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+
+      <form class="register-form" (submit)="onRegisterSubmit($event)">
+        <div class="name-input-feilds">
+          <div class="first-name-wrapper">
+            <input
+              class="first-name"
+              type="text"
+              id="first-name"
+              [(ngModel)]="firstName"
+              name="firstName"
+              placeholder=" "
+              required
+            />
+            <label for="first-name">First name *</label>
+          </div>
+          <div class="last-name-wrapper">
+            <input
+              class="last-name"
+              type="text"
+              id="last-name"
+              [(ngModel)]="lastName"
+              name="lastName"
+              placeholder=" "
+              required
+            />
+            <label for="last-name">Last name *</label>
+          </div>
+        </div>
+        <div class="email-input-feild">
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder=" "
+            required
+          />
+          <label for="email">Email *</label>
+        </div>
+        <div class="password-input-feilds">
+          <div class="password-wrapper">
+            <input
+              class="password"
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              placeholder=" "
+              required
+            />
+            <label for="password">Password *</label>
+          </div>
+          <div class="confirm-password-wrapper">
+            <input
+              class="confirm-password"
+              [type]="showPassword ? 'text' : 'password'"
+              id="confirm-password"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              placeholder=" "
+              required
+            />
+            <label for="confirm-password">Confirm *</label>
+          </div>
+        </div>
+        <div class="password-requiement" [class.valid]="isPasswordStrong">
+          <p>Use 8 or more characters with a mix of letters, numbers & symbols</p>
+        </div>
+        <div class="password-match-error" *ngIf="confirmPassword && !passwordsMatch">
+          <p>Passwords do not match</p>
+        </div>
+        <div class="show-password">
+          <input
+            type="checkbox"
+            id="show-password"
+            [checked]="showPassword"
+            (change)="toggleShowPassword()"
+          />
+          <label for="show-password">Show password</label>
+        </div>
+        <div class="botton-div">
+          <div class="left-div-buttom-signin">
+            <a routerLink="/login">Sign in instead</a>
+          </div>
+          <div class="right-register-button">
+            <button type="submit" [disabled]="isLoading() || !isFormValid">
+              <span *ngIf="!isLoading()">Next</span>
+              <span *ngIf="isLoading()" class="spinner"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- OTP Verification Step -->
+    <div class="left-div otp-step" *ngIf="currentStep() === 'otp'">
+      <div class="logo-div">
+        <img
+          class="google-logo"
+          src="https://1000logos.net/wp-content/uploads/2021/05/Google-logo.png"
+          alt="Google"
+        />
+      </div>
+      <div class="header-div">
+        <h3>Verify your email</h3>
+        <p class="otp-subtitle">
+          We've sent a 6-digit code to <strong>{{ email }}</strong>
+        </p>
+      </div>
+
+      <!-- Error/Success Messages -->
+      <div class="message-box error" *ngIf="errorMessage()">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+          />
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+      <div class="message-box success" *ngIf="successMessage()">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+          />
+        </svg>
+        <span>{{ successMessage() }}</span>
+      </div>
+
+      <div class="otp-form">
+        <div class="otp-inputs" (paste)="onOtpPaste($event)">
+          <input
+            *ngFor="let digit of otp; let i = index; trackBy: trackByIndex"
+            type="text"
+            maxlength="1"
+            [id]="'otp-' + i"
+            (input)="onOtpInput($event, i)"
+            (keydown)="onOtpKeydown($event, i)"
+            class="otp-input"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="one-time-code"
+          />
+        </div>
+
+        <div class="otp-actions">
+          <button type="button" class="resend-btn" (click)="resendOtp()" [disabled]="isLoading()">
+            Resend code
+          </button>
+        </div>
+
+        <div class="botton-div">
+          <div class="left-div-buttom-signin">
+            <a (click)="goBackToRegister()" class="back-link">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+              </svg>
+              Back
+            </a>
+          </div>
+          <div class="right-register-button">
+            <button type="button" (click)="verifyOtp()" [disabled]="isLoading() || !isOtpComplete">
+              <span *ngIf="!isLoading()">Verify</span>
+              <span *ngIf="isLoading()" class="spinner"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-div">
+      <img
+        src="https://cdn.dribbble.com/userupload/22793462/file/original-73b63d7b1c6df0c0ec481727dcdf075f.png?resize=752x&vertical=center"
+        alt="Illustration"
+      />
+    </div>
+  </div>
+</div>

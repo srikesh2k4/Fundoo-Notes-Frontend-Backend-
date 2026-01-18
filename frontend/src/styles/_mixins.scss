@@ -1,0 +1,79 @@
+@mixin input-box-style {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: "Google Sans", sans-serif;
+
+  &:focus {
+    outline: none;
+    border-color: #0453d1;
+    box-shadow: 0 0 5px rgba(66, 133, 244, 0.5);
+  }
+}
+
+@mixin floating-label-input(
+  $active-color: #0453d1,
+  $label-color: #888,
+  $bg-color: #fff
+) {
+  position: relative;
+  width: 100%;
+
+  input {
+    @include input-box-style;
+  }
+
+  label {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: $bg-color;
+    padding: 0 0.25rem;
+    color: $label-color;
+    font-size: 0.875rem;
+    pointer-events: none;
+    transition: all 0.25s ease;
+  }
+
+  input:focus + label,
+  input:not(:placeholder-shown) + label {
+    top: 0.2rem;
+    font-size: 0.75rem;
+    color: $active-color;
+  }
+}
+
+@mixin button-style {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  margin: 1rem 0;
+  border: none;
+  border-radius: 4px;
+  background-color: #4285f4;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: "Google Sans", sans-serif;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #357ae8;
+  }
+
+  &:disabled {
+    background-color: #a0c3ff;
+    cursor: not-allowed;
+  }
+}
+
+@mixin link-style {
+  color: #4285f4;
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

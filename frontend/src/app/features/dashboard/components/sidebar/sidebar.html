@@ -1,0 +1,165 @@
+<aside class="sidebar" [class.expanded]="isExpanded">
+  <nav class="sidebar-nav">
+    <!-- Notes -->
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}"
+       class="nav-item"
+       aria-label="Notes">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"></path>
+        </svg>
+      </div>
+      <span class="nav-text">Notes</span>
+    </a>
+
+    <!-- Reminders -->
+    <a href="#" class="nav-item" aria-label="Reminders">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M18 17v-6c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v6H4v2h16v-2h-2zm-2 0H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6zm-4 5c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"></path>
+        </svg>
+      </div>
+      <span class="nav-text">Reminders</span>
+    </a>
+
+    <!-- Divider -->
+    <div class="nav-divider"></div>
+
+    <!-- Dynamic Labels -->
+    <ng-container *ngFor="let label of labels()">
+      <a [routerLink]="['/label', label.name]"
+         routerLinkActive="active"
+         class="nav-item"
+         [attr.aria-label]="label.name">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path>
+          </svg>
+        </div>
+        <span class="nav-text">{{ label.name }}</span>
+      </a>
+    </ng-container>
+
+    <!-- Edit Labels -->
+    <button class="nav-item nav-btn" aria-label="Edit labels" (click)="openEditLabels()">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M20.41 4.94l-1.35-1.35c-.78-.78-2.05-.78-2.83 0L13.4 6.41 14 7l-7 7-2 6 6-2 7-7 .58.58 2.83-2.83c.78-.78.78-2.05 0-2.83zM7.41 17.17l-.59-.59L7 15l.59.59-.18 1.58zm10-10L16 8.59 15.41 8l1.42-1.42 1.41 1.41-.83.18zM17.59 6l-.59-.59.59-.59.59.59-.59.59z"></path>
+        </svg>
+      </div>
+      <span class="nav-text">Edit labels</span>
+    </button>
+
+    <!-- Divider -->
+    <div class="nav-divider"></div>
+
+    <!-- Archive -->
+    <a routerLink="/archive"
+       routerLinkActive="active"
+       class="nav-item"
+       aria-label="Archive">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5zm11-5.5l-4 4-4-4 1.41-1.41L11 13.67V10h2v3.67l1.59-1.59L16 13.5z"></path>
+        </svg>
+      </div>
+      <span class="nav-text">Archive</span>
+    </a>
+
+    <!-- Trash -->
+    <a routerLink="/trash"
+       routerLinkActive="active"
+       class="nav-item"
+       aria-label="Trash">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 4V3H9v1H4v2h1v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6h1V4h-5zm2 15H7V6h10v13z"></path>
+          <path d="M9 8h2v9H9zm4 0h2v9h-2z"></path>
+        </svg>
+      </div>
+      <span class="nav-text">Trash</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <a href="#" class="footer-link">Open-source licenses</a>
+  </div>
+</aside>
+
+<!-- Edit Labels Dialog -->
+<div class="dialog-overlay" *ngIf="showEditLabelsDialog()" (click)="closeEditLabels()">
+  <div class="edit-labels-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Edit labels</h2>
+    </div>
+    <div class="dialog-content">
+      <!-- Create New Label Input -->
+      <div class="label-input-row">
+        <button class="icon-btn close-btn" (click)="newLabelName = ''" *ngIf="newLabelName">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+        <button class="icon-btn plus-btn" *ngIf="!newLabelName">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
+        </button>
+        <input
+          type="text"
+          placeholder="Create new label"
+          class="label-input"
+          [(ngModel)]="newLabelName"
+          (keydown)="onNewLabelKeydown($event)">
+        <button
+          class="icon-btn check-btn"
+          *ngIf="newLabelName.trim()"
+          (click)="createLabel()"
+          [disabled]="isCreatingLabel()">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
+        </button>
+      </div>
+
+      <!-- Existing Labels List -->
+      <div class="labels-list">
+        <div class="label-row" *ngFor="let label of labels()">
+          <!-- View Mode -->
+          <ng-container *ngIf="editingLabelId() !== label.id">
+            <button class="icon-btn delete-btn" (click)="deleteLabel(label)">
+              <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+            </button>
+            <span class="label-icon">
+              <svg viewBox="0 0 24 24"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path></svg>
+            </span>
+            <span class="label-name">{{ label.name }}</span>
+            <button class="icon-btn edit-btn" (click)="startEditLabel(label)">
+              <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+            </button>
+          </ng-container>
+
+          <!-- Edit Mode -->
+          <ng-container *ngIf="editingLabelId() === label.id">
+            <button class="icon-btn delete-btn" (click)="deleteLabel(label)">
+              <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+            </button>
+            <span class="label-icon">
+              <svg viewBox="0 0 24 24"><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path></svg>
+            </span>
+            <input
+              type="text"
+              class="label-edit-input"
+              [(ngModel)]="editingLabelName"
+              (keydown)="onEditLabelKeydown($event, label)"
+              (blur)="saveEditLabel(label)"
+              autofocus>
+            <button class="icon-btn check-btn" (click)="saveEditLabel(label)">
+              <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="done-btn" (click)="closeEditLabels()">Done</button>
+    </div>
+  </div>
+</div>

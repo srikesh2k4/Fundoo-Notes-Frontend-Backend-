@@ -1,0 +1,193 @@
+// ==============================
+// Variables (Google Keep–like)
+// ==============================
+$sidebar-collapsed: 80px;
+$sidebar-expanded: 280px;
+$header-height: 64px;
+
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-accent: #1a73e8;
+
+// ==============================
+// Main Content Area
+// ==============================
+.main-content {
+  min-height: calc(100vh - $header-height);
+  background-color: var(--bg-primary);
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s ease;
+
+  width: 100%;
+  margin-left: $sidebar-collapsed;
+  overflow-x: hidden;
+
+  &.sidebar-expanded {
+    margin-left: $sidebar-expanded;
+  }
+
+  @media (max-width: 1024px) {
+    margin-left: $sidebar-collapsed;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
+}
+
+// ==============================
+// Content Wrapper (Keep-style)
+// ==============================
+.content-wrapper {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 32px 32px;
+
+  @media (max-width: 1200px) {
+    max-width: 1100px;
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 100%;
+    padding: 16px 24px 32px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 16px 24px;
+  }
+}
+
+// ==============================
+// Search Header
+// ==============================
+.search-header {
+  padding: 8px 0 16px;
+
+  .search-results-text {
+    font-size: 14px;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+}
+
+// ==============================
+// Loading State
+// ==============================
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $color-border;
+    border-top-color: $color-accent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==============================
+// Notes Sections
+// ==============================
+.notes-section {
+  margin-top: 24px;
+
+  &:first-of-type {
+    margin-top: 16px;
+  }
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+// ==============================
+// Notes Grid (Keep Masonry)
+// ==============================
+.notes-masonry {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  // List View
+  &.list-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    ::ng-deep app-note-card {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+}
+
+// ==============================
+// Empty State
+// ==============================
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 24px;
+  text-align: center;
+
+  .empty-icon {
+    width: 120px;
+    height: 120px;
+    fill: var(--text-secondary);
+    opacity: 0.25;
+    margin-bottom: 24px;
+  }
+
+  p {
+    font-size: 22px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 80px 16px;
+
+    p {
+      font-size: 16px;
+    }
+  }
+}
