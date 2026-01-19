@@ -41,7 +41,6 @@ export class MainContentComponent implements OnInit, OnChanges {
   loadNotes(): void {
     this.isLoading.set(true);
     this.noteService.notes$.subscribe(notes => {
-      // Store all active notes
       this.allNotes.set(notes.filter(n => !n.isDeleted && !n.isArchived));
       this.filterNotes();
       this.isLoading.set(false);
@@ -52,7 +51,6 @@ export class MainContentComponent implements OnInit, OnChanges {
   filterNotes(): void {
     let notes = this.allNotes();
 
-    // Apply search filter
     if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
       notes = notes.filter(n =>
@@ -62,7 +60,6 @@ export class MainContentComponent implements OnInit, OnChanges {
       );
     }
 
-    // Separate pinned and others
     const pinned = notes.filter(n => n.isPinned);
     const others = notes.filter(n => !n.isPinned);
     this.pinnedNotes.set(pinned);

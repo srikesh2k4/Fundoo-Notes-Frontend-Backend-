@@ -19,7 +19,7 @@ export class NavbarComponent implements OnInit {
   private router = inject(Router);
   themeService = inject(ThemeService);
 
-  searchQuery = signal('');
+  searchQueryValue = '';
   isSearchActive = signal(false);
   showProfileMenu = signal(false);
   showSettingsMenu = signal(false);
@@ -29,6 +29,14 @@ export class NavbarComponent implements OnInit {
   @Output() searchChange = new EventEmitter<string>();
   @Output() viewModeChange = new EventEmitter<boolean>();
   @Output() refresh = new EventEmitter<void>();
+
+  get searchQuery(): string {
+    return this.searchQueryValue;
+  }
+
+  set searchQuery(value: string) {
+    this.searchQueryValue = value;
+  }
 
   userProfile = signal({
     name: 'User',
@@ -66,22 +74,22 @@ export class NavbarComponent implements OnInit {
   }
 
   onSearchBlur(): void {
-    if (!this.searchQuery()) {
+    if (!this.searchQuery) {
       this.isSearchActive.set(false);
     }
   }
 
   onSearchInput(): void {
-    this.searchChange.emit(this.searchQuery());
+    this.searchChange.emit(this.searchQuery);
   }
 
   onSearchSubmit(event: Event): void {
     event.preventDefault();
-    this.searchChange.emit(this.searchQuery());
+    this.searchChange.emit(this.searchQuery);
   }
 
   clearSearch(): void {
-    this.searchQuery.set('');
+    this.searchQuery = '';
     this.searchChange.emit('');
     this.isSearchActive.set(false);
   }
