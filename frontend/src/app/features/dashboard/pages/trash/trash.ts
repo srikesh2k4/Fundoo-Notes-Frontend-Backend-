@@ -18,7 +18,7 @@ export class TrashComponent implements OnInit {
 
   sidebarExpanded = signal(false);
   isGridView = signal(true);
-  searchQuery = signal('');
+  searchQueryValue = '';
   trashedNotes = signal<Note[]>([]);
   filteredNotes = signal<Note[]>([]);
   isLoading = signal(true);
@@ -32,7 +32,7 @@ export class TrashComponent implements OnInit {
   }
 
   onSearchChange(query: string): void {
-    this.searchQuery.set(query);
+    this.searchQueryValue = query;
     this.filterNotes();
   }
 
@@ -59,7 +59,7 @@ export class TrashComponent implements OnInit {
 
   filterNotes(): void {
     let notes = this.trashedNotes();
-    const query = this.searchQuery().toLowerCase().trim();
+    const query = this.searchQueryValue.toLowerCase().trim();
 
     if (query) {
       notes = notes.filter(n =>

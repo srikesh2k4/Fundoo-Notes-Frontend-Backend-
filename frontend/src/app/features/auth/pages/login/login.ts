@@ -46,20 +46,29 @@ export class Login {
       password: this.password
     };
 
+    console.log('Attempting login with:', { email: loginData.email });
+
     this.authService.login(loginData).subscribe({
       next: (response) => {
+        console.log('Login response:', response);
         this.isLoading.set(false);
         if (response.success) {
+          console.log('Login successful, navigating to home');
           this.router.navigate(['/']);
+        } else {
+          console.error('Login failed:', response.message);
+          this.errorMessage.set(response.message || 'Login failed');
         }
       },
       error: (error) => {
+        console.error('Login error:', error);
         this.isLoading.set(false);
-        const errorMsg = error.error?.message || 'Login failed. Please check your credentials.';
+        const errorMsg = error.error?.message || error.message || 'Login failed. Please check your credentials.';
 
-        // Check if email is not verified
         if (errorMsg.toLowerCase().includes('verify') || errorMsg.toLowerCase().includes('otp')) {
           this.errorMessage.set('Please verify your email first. Check your inbox for the OTP.');
+        } else if (error.status === 0) {
+          this.errorMessage.set('Cannot connect to server. Please ensure the backend is running.');
         } else {
           this.errorMessage.set(errorMsg);
         }

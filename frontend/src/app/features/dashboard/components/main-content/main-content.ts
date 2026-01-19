@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, signal, inject, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, signal, inject, OnChanges, SimpleChanges, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TakeNoteComponent } from '../take-note/take-note';
 import { NoteCardComponent } from '../note-card/note-card';
@@ -33,7 +33,11 @@ export class MainContentComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('[MainContent] ngOnChanges called with:', changes);
     if (changes['searchQuery']) {
+      console.log('[MainContent] Search query changed to:', this.searchQuery);
+      console.log('[MainContent] Previous value:', changes['searchQuery'].previousValue);
+      console.log('[MainContent] Current value:', changes['searchQuery'].currentValue);
       this.filterNotes();
     }
   }
@@ -41,6 +45,7 @@ export class MainContentComponent implements OnInit, OnChanges {
   loadNotes(): void {
     this.isLoading.set(true);
     this.noteService.notes$.subscribe(notes => {
+      console.log('[MainContent] Loaded notes:', notes.length);
       this.allNotes.set(notes.filter(n => !n.isDeleted && !n.isArchived));
       this.filterNotes();
       this.isLoading.set(false);
@@ -50,6 +55,7 @@ export class MainContentComponent implements OnInit, OnChanges {
 
   filterNotes(): void {
     let notes = this.allNotes();
+    console.log('[MainContent] Filtering notes. Total:', notes.length, 'Query:', this.searchQuery);
 
     if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
@@ -58,10 +64,12 @@ export class MainContentComponent implements OnInit, OnChanges {
         (n.content && n.content.toLowerCase().includes(query)) ||
         (n.labels && n.labels.some(l => l.name.toLowerCase().includes(query)))
       );
+      console.log('[MainContent] Filtered to:', notes.length, 'notes');
     }
 
     const pinned = notes.filter(n => n.isPinned);
     const others = notes.filter(n => !n.isPinned);
+    console.log('[MainContent] Pinned:', pinned.length, 'Others:', others.length);
     this.pinnedNotes.set(pinned);
     this.otherNotes.set(others);
   }

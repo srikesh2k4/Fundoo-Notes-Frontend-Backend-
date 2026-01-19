@@ -238,8 +238,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// HTTPS Redirection
-app.UseHttpsRedirection();
+// HTTPS Redirection (only in production or when HTTPS is configured)
+if (!app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("UseHttpsRedirection", false))
+{
+    app.UseHttpsRedirection();
+}
 
 // CORS
 app.UseCors("FundooPolicy");

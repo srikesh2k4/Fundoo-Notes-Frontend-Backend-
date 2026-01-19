@@ -19,7 +19,7 @@ export class ArchiveComponent implements OnInit {
 
   sidebarExpanded = signal(false);
   isGridView = signal(true);
-  searchQuery = signal('');
+  searchQueryValue = '';
   archivedNotes = signal<Note[]>([]);
   filteredNotes = signal<Note[]>([]);
   isLoading = signal(true);
@@ -36,7 +36,7 @@ export class ArchiveComponent implements OnInit {
   }
 
   onSearchChange(query: string): void {
-    this.searchQuery.set(query);
+    this.searchQueryValue = query;
     this.filterNotes();
   }
 
@@ -57,7 +57,7 @@ export class ArchiveComponent implements OnInit {
 
   filterNotes(): void {
     let notes = this.archivedNotes();
-    const query = this.searchQuery().toLowerCase().trim();
+    const query = this.searchQueryValue.toLowerCase().trim();
 
     if (query) {
       notes = notes.filter(n =>

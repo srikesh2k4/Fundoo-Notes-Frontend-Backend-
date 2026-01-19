@@ -14,14 +14,15 @@ import { MainContentComponent } from '../../components/main-content/main-content
 export class HomeComponent {
   sidebarExpanded = signal(false);
   isGridView = signal(true);
-  searchQuery = signal('');
+  searchQueryValue = '';
 
   toggleSidebar(): void {
     this.sidebarExpanded.update(value => !value);
   }
 
   onSearchChange(query: string): void {
-    this.searchQuery.set(query);
+    console.log('[Home] Received search query:', query);
+    this.searchQueryValue = query;
   }
 
   onViewModeChange(isGrid: boolean): void {

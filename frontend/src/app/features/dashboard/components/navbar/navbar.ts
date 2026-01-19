@@ -71,25 +71,30 @@ export class NavbarComponent implements OnInit {
 
   onSearchFocus(): void {
     this.isSearchActive.set(true);
+    console.log('[Navbar] Search focused');
   }
 
   onSearchBlur(): void {
     if (!this.searchQuery) {
       this.isSearchActive.set(false);
     }
+    console.log('[Navbar] Search blur, query:', this.searchQuery);
   }
 
   onSearchInput(): void {
+    console.log('[Navbar] Search input changed to:', this.searchQuery);
     this.searchChange.emit(this.searchQuery);
   }
 
   onSearchSubmit(event: Event): void {
     event.preventDefault();
+    console.log('[Navbar] Search submitted:', this.searchQuery);
     this.searchChange.emit(this.searchQuery);
   }
 
   clearSearch(): void {
     this.searchQuery = '';
+    console.log('[Navbar] Search cleared');
     this.searchChange.emit('');
     this.isSearchActive.set(false);
   }
