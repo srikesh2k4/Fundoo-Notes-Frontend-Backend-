@@ -12,14 +12,17 @@ namespace BusinessLayer.Services
     {
         private readonly INoteRepository _noteRepository;
         private readonly ICollaboratorRepository _collaboratorRepository;
+        private readonly ILabelRepository _labelRepository;
 
         public NoteService(
             INoteRepository noteRepository,
-            ICollaboratorRepository collaboratorRepository
+            ICollaboratorRepository collaboratorRepository,
+            ILabelRepository labelRepository
         )
         {
             _noteRepository = noteRepository;
             _collaboratorRepository = collaboratorRepository;
+            _labelRepository = labelRepository;
         }
 
         // ✅ IMPROVED: Add label to note with proper validation
@@ -127,6 +130,24 @@ namespace BusinessLayer.Services
                 IsDeleted = false,
                 CreatedAt = DateTime.UtcNow,
             };
+
+            // Attach labels if provided
+            if (dto.LabelIds != null && dto.LabelIds.Any())
+            {
+                foreach (var labelId in dto.LabelIds.Distinct())
+                {
+                    var label = await _labelRepository.GetByIdAsync(labelId);
+                    if (label != null && label.UserId == userId)
+                    {
+                        note.NoteLabels.Add(new NoteLabel
+                        {
+                            Note = note,
+                            Label = label,
+                            CreatedAt = DateTime.UtcNow
+                        });
+                    }
+                }
+            }
 
             await _noteRepository.AddAsync(note);
             await _noteRepository.SaveAsync();

@@ -47,7 +47,14 @@ builder.Services.AddScoped<ICollaboratorRepository, CollaboratorRepository>();
 // 4. SERVICE REGISTRATION
 // ========================================
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<INoteService, NoteService>();
+// Register NoteService with all required dependencies
+builder.Services.AddScoped<INoteService, NoteService>(provider =>
+    new NoteService(
+        provider.GetRequiredService<INoteRepository>(),
+        provider.GetRequiredService<ICollaboratorRepository>(),
+        provider.GetRequiredService<ILabelRepository>()
+    )
+);
 builder.Services.AddScoped<ILabelService, LabelService>();
 builder.Services.AddScoped<ICollaboratorService, CollaboratorService>();
 
