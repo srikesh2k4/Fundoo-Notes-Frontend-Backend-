@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, signal, inject, OnChanges, SimpleChanges, effect } from '@angular/core';
+import { Component, OnInit, Input, signal, inject, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { TakeNoteComponent } from '../take-note/take-note';
 import { NoteCardComponent } from '../note-card/note-card';
 import { NoteEditDialogComponent } from '../note-edit-dialog/note-edit-dialog';
@@ -13,12 +14,13 @@ import { Note } from '../../../../core/models/note.model';
   templateUrl: './main-content.html',
   styleUrls: ['./main-content.scss']
 })
-export class MainContentComponent implements OnInit, OnChanges {
+export class MainContentComponent implements OnInit, OnChanges, OnDestroy {
   @Input() sidebarExpanded = false;
   @Input() isGridView = true;
   @Input() searchQuery = '';
 
   private noteService = inject(NoteService);
+  private notesSubscription?: Subscription;
 
   allNotes = signal<Note[]>([]);
   pinnedNotes = signal<Note[]>([]);
@@ -29,33 +31,31 @@ export class MainContentComponent implements OnInit, OnChanges {
   showEditDialog = signal(false);
 
   ngOnInit(): void {
-    this.loadNotes();
+    this.setupNotesSubscription();
+    this.noteService.refreshNotes();
+  }
+
+  ngOnDestroy(): void {
+    this.notesSubscription?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('[MainContent] ngOnChanges called with:', changes);
     if (changes['searchQuery']) {
-      console.log('[MainContent] Search query changed to:', this.searchQuery);
-      console.log('[MainContent] Previous value:', changes['searchQuery'].previousValue);
-      console.log('[MainContent] Current value:', changes['searchQuery'].currentValue);
       this.filterNotes();
     }
   }
 
-  loadNotes(): void {
+  private setupNotesSubscription(): void {
     this.isLoading.set(true);
-    this.noteService.notes$.subscribe(notes => {
-      console.log('[MainContent] Loaded notes:', notes.length);
+    this.notesSubscription = this.noteService.notes$.subscribe(notes => {
       this.allNotes.set(notes.filter(n => !n.isDeleted && !n.isArchived));
       this.filterNotes();
       this.isLoading.set(false);
     });
-    this.noteService.refreshNotes();
   }
 
   filterNotes(): void {
     let notes = this.allNotes();
-    console.log('[MainContent] Filtering notes. Total:', notes.length, 'Query:', this.searchQuery);
 
     if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase().trim();
@@ -64,22 +64,24 @@ export class MainContentComponent implements OnInit, OnChanges {
         (n.content && n.content.toLowerCase().includes(query)) ||
         (n.labels && n.labels.some(l => l.name.toLowerCase().includes(query)))
       );
-      console.log('[MainContent] Filtered to:', notes.length, 'notes');
     }
 
     const pinned = notes.filter(n => n.isPinned);
     const others = notes.filter(n => !n.isPinned);
-    console.log('[MainContent] Pinned:', pinned.length, 'Others:', others.length);
     this.pinnedNotes.set(pinned);
     this.otherNotes.set(others);
   }
 
   onNoteCreated(): void {
-    // Notes are automatically updated via the service's BehaviorSubject
+    // Notes are automatically updated via the BehaviorSubject subscription
+    // Just trigger a refresh to get the latest from server
+    this.noteService.refreshNotes();
   }
 
   onNoteUpdated(): void {
-    // Notes are automatically updated via the service's BehaviorSubject
+    // Notes are automatically updated via the BehaviorSubject subscription
+    // Just trigger a refresh to get the latest from server
+    this.noteService.refreshNotes();
   }
 
   onNoteClick(note: Note): void {
@@ -90,5 +92,7 @@ export class MainContentComponent implements OnInit, OnChanges {
   closeEditDialog(): void {
     this.showEditDialog.set(false);
     this.selectedNote.set(null);
+    // Refresh notes after closing the edit dialog to reflect any changes
+    this.noteService.refreshNotes();
   }
 }

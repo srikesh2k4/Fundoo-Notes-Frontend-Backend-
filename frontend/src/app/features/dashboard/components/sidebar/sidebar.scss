@@ -36,7 +36,7 @@ $z-index-overlay: 1000;
   width: $sidebar-width-collapsed;
   height: calc(100vh - $header-height);
   background-color: $color-bg;
-  border-right: 1px solid $color-border;
+  border: none;
   position: fixed;
   top: $header-height;
   left: 0;
@@ -57,7 +57,7 @@ $z-index-overlay: 1000;
   @media (max-width: 768px) {
     width: $sidebar-width-expanded;
     transform: translateX(-100%);
-    border-right: none;
+    border: none;
     transition: transform $transition-medium;
 
     &.expanded {
@@ -79,9 +79,11 @@ $z-index-overlay: 1000;
   display: flex;
   align-items: center;
   height: $nav-item-height;
-  margin: 0 $spacing-sm $spacing-xs;
+  margin: 0;
+  margin-bottom: 1rem;
   padding: 0;
   border-radius: $border-radius;
+  border: none;
   color: $color-text;
   cursor: pointer;
   transition: background-color $transition-fast;
@@ -90,6 +92,11 @@ $z-index-overlay: 1000;
 
   &:hover {
     background-color: $color-hover;
+
+        border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 
   &:active {
@@ -98,12 +105,38 @@ $z-index-overlay: 1000;
 
   &.active {
     background-color: $color-active;
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    // No margin or padding overrides, keep alignment consistent
   }
 
   /* Expanded sidebar */
   .sidebar.expanded & {
     justify-content: flex-start;
     padding: 0 $spacing-md;
+  }
+}
+
+// ================= NAV BUTTON =================
+.nav-btn {
+  background: none;
+  border: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  width: calc(100% - #{$spacing-sm * 2});
+
+  // Reset button-specific styles that might conflict
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+// ================= SIDEBAR EXPANDED NAV BUTTON =================
+.sidebar.expanded {
+  .nav-btn {
+    width: calc(100% - #{$spacing-sm * 2});
   }
 }
 
@@ -158,17 +191,15 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= DIVIDER =================
+// ================= DIVIDER - REMOVE BORDERS =================
 .nav-divider {
-  height: 1px;
-  background-color: $color-border;
-  margin: $spacing-sm $spacing-md;
+  display: none; // Hide all dividers to remove borders
 }
 
 // ================= FOOTER =================
 .sidebar-footer {
   padding: $spacing-lg;
-  border-top: 1px solid $color-border;
+  border: none;
 }
 
 .footer-link {
@@ -206,6 +237,7 @@ $z-index-overlay: 1000;
   max-width: 360px;
   max-height: 80vh;
   border-radius: $border-radius-md;
+  border: none;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -226,7 +258,7 @@ $z-index-overlay: 1000;
 
 .dialog-header {
   padding: $spacing-lg;
-  border-bottom: 1px solid $color-border;
+  border: none;
 
   h2 {
     margin: 0;
@@ -245,7 +277,7 @@ $z-index-overlay: 1000;
 
 .dialog-footer {
   padding: $spacing-md $spacing-lg;
-  border-top: 1px solid $color-border;
+  border: none;
   display: flex;
   justify-content: flex-end;
 }
@@ -405,6 +437,19 @@ $z-index-overlay: 1000;
 
   .label-row:hover & {
     opacity: 1;
+  }
+}
+
+// ================= EDIT LABEL BUTTON =================
+.nav-btn {
+  background: none;
+  border: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  width: 100%;
+
+  // Collapsed state - circular button
+  .sidebar:not(.expanded) & {
+    width: 48px;
   }
 }
 

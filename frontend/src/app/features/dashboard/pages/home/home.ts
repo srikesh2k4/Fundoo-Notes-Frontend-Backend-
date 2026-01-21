@@ -21,7 +21,6 @@ export class HomeComponent {
   }
 
   onSearchChange(query: string): void {
-    console.log('[Home] Received search query:', query);
     this.searchQueryValue = query;
   }
 

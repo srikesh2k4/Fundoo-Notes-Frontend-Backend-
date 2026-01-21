@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { NoteCardComponent } from '../../components/note-card/note-card';
@@ -15,9 +16,11 @@ import { Note } from '../../../../core/models/note.model';
   templateUrl: './label-notes.html',
   styleUrls: ['./label-notes.scss']
 })
-export class LabelNotesComponent implements OnInit {
+export class LabelNotesComponent implements OnInit, OnDestroy {
   private noteService = inject(NoteService);
   private route = inject(ActivatedRoute);
+  private notesSubscription?: Subscription;
+  private routeSubscription?: Subscription;
 
   sidebarExpanded = signal(false);
   labelName = signal('');
@@ -44,19 +47,22 @@ export class LabelNotesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.routeSubscription = this.route.params.subscribe(params => {
       this.labelName.set(params['labelName']);
-      this.loadLabelNotes();
+      this.setupNotesSubscription();
+      this.noteService.refreshNotes();
     });
   }
 
-  toggleSidebar(): void {
-    this.sidebarExpanded.update(value => !value);
+  ngOnDestroy(): void {
+    this.notesSubscription?.unsubscribe();
+    this.routeSubscription?.unsubscribe();
   }
 
-  loadLabelNotes(): void {
+  private setupNotesSubscription(): void {
     this.isLoading.set(true);
-    this.noteService.notes$.subscribe(notes => {
+    this.notesSubscription?.unsubscribe();
+    this.notesSubscription = this.noteService.notes$.subscribe(notes => {
       const labelNotes = notes.filter(n =>
         n.labels?.some(l => l.name.toLowerCase() === this.labelName().toLowerCase()) &&
         !n.isArchived &&
@@ -65,11 +71,14 @@ export class LabelNotesComponent implements OnInit {
       this.labelNotes.set(labelNotes);
       this.isLoading.set(false);
     });
-    this.noteService.refreshNotes();
+  }
+
+  toggleSidebar(): void {
+    this.sidebarExpanded.update(value => !value);
   }
 
   onNoteUpdated(): void {
-    this.loadLabelNotes();
+    this.noteService.refreshNotes();
   }
 
   onSearchChange(query: string): void {
@@ -88,5 +97,6 @@ export class LabelNotesComponent implements OnInit {
   closeEditDialog(): void {
     this.showEditDialog.set(false);
     this.selectedNote.set(null);
+    this.noteService.refreshNotes();
   }
 }

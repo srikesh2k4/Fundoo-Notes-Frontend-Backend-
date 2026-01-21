@@ -1,5 +1,6 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { NoteCardComponent } from '../../components/note-card/note-card';
@@ -14,8 +15,9 @@ import { Note } from '../../../../core/models/note.model';
   templateUrl: './archive.html',
   styleUrls: ['./archive.scss']
 })
-export class ArchiveComponent implements OnInit {
+export class ArchiveComponent implements OnInit, OnDestroy {
   private noteService = inject(NoteService);
+  private notesSubscription?: Subscription;
 
   sidebarExpanded = signal(false);
   isGridView = signal(true);
@@ -28,7 +30,22 @@ export class ArchiveComponent implements OnInit {
   showEditDialog = signal(false);
 
   ngOnInit(): void {
-    this.loadArchivedNotes();
+    this.setupNotesSubscription();
+    this.noteService.refreshNotes();
+  }
+
+  ngOnDestroy(): void {
+    this.notesSubscription?.unsubscribe();
+  }
+
+  private setupNotesSubscription(): void {
+    this.isLoading.set(true);
+    this.notesSubscription = this.noteService.notes$.subscribe(notes => {
+      const archived = notes.filter(n => n.isArchived && !n.isDeleted);
+      this.archivedNotes.set(archived);
+      this.filterNotes();
+      this.isLoading.set(false);
+    });
   }
 
   toggleSidebar(): void {
@@ -42,17 +59,6 @@ export class ArchiveComponent implements OnInit {
 
   onViewModeChange(isGrid: boolean): void {
     this.isGridView.set(isGrid);
-  }
-
-  loadArchivedNotes(): void {
-    this.isLoading.set(true);
-    this.noteService.notes$.subscribe(notes => {
-      const archived = notes.filter(n => n.isArchived && !n.isDeleted);
-      this.archivedNotes.set(archived);
-      this.filterNotes();
-      this.isLoading.set(false);
-    });
-    this.noteService.refreshNotes();
   }
 
   filterNotes(): void {
@@ -71,7 +77,7 @@ export class ArchiveComponent implements OnInit {
   }
 
   onNoteUpdated(): void {
-    this.loadArchivedNotes();
+    this.noteService.refreshNotes();
   }
 
   onNoteClick(note: Note): void {
@@ -82,5 +88,6 @@ export class ArchiveComponent implements OnInit {
   closeEditDialog(): void {
     this.showEditDialog.set(false);
     this.selectedNote.set(null);
+    this.noteService.refreshNotes();
   }
 }

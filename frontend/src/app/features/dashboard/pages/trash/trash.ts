@@ -1,5 +1,6 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { NoteCardComponent } from '../../components/note-card/note-card';
@@ -13,8 +14,9 @@ import { Note } from '../../../../core/models/note.model';
   templateUrl: './trash.html',
   styleUrls: ['./trash.scss']
 })
-export class TrashComponent implements OnInit {
+export class TrashComponent implements OnInit, OnDestroy {
   private noteService = inject(NoteService);
+  private trashSubscription?: Subscription;
 
   sidebarExpanded = signal(false);
   isGridView = signal(true);
@@ -25,6 +27,10 @@ export class TrashComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTrashedNotes();
+  }
+
+  ngOnDestroy(): void {
+    this.trashSubscription?.unsubscribe();
   }
 
   toggleSidebar(): void {
