@@ -5,19 +5,27 @@ import { NoteService } from '../../../../core/services/note.service';
 import { LabelService } from '../../../../core/services/label.service';
 import { Note, LabelDto } from '../../../../core/models/note.model';
 import { Label } from '../../../../core/models/label.model';
-import { NOTE_COLORS } from '../note-card/note-card';
-import { CollaboratorDialogComponent } from '../collaborator-dialog/collaborator-dialog';
-import { ReminderDialogComponent } from '../reminder-dialog/reminder-dialog';
+
+// Google Keep color palette
+export const NOTE_COLORS = [
+  { name: 'Default', value: '#FFFFFF' },
+  { name: 'Red', value: '#F28B82' },
+  { name: 'Orange', value: '#FBBC04' },
+  { name: 'Yellow', value: '#FFF475' },
+  { name: 'Green', value: '#CCFF90' },
+  { name: 'Teal', value: '#A7FFEB' },
+  { name: 'Blue', value: '#CBF0F8' },
+  { name: 'Dark Blue', value: '#AECBFA' },
+  { name: 'Purple', value: '#D7AEFB' },
+  { name: 'Pink', value: '#FDCFE8' },
+  { name: 'Brown', value: '#E6C9A8' },
+  { name: 'Gray', value: '#E8EAED' }
+];
 
 @Component({
   selector: 'app-note-edit-dialog',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule,
-    CollaboratorDialogComponent,
-    ReminderDialogComponent
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './note-edit-dialog.html',
   styleUrls: ['./note-edit-dialog.scss']
 })
@@ -35,8 +43,6 @@ export class NoteEditDialogComponent implements OnInit {
   showColorPicker = signal(false);
   showMoreMenu = signal(false);
   showLabelPicker = signal(false);
-  showCollaboratorDialog = signal(false);
-  showReminderDialog = signal(false);
   isSaving = signal(false);
   allLabels = signal<Label[]>([]);
 
@@ -141,7 +147,7 @@ export class NoteEditDialogComponent implements OnInit {
     this.showLabelPicker.update(v => !v);
     this.showColorPicker.set(false);
     this.showMoreMenu.set(false);
-    this.labelSearchQuery.set(''); // Reset search
+    this.labelSearchQuery.set('');
   }
 
   get filteredLabels(): Label[] {
@@ -156,7 +162,6 @@ export class NoteEditDialogComponent implements OnInit {
 
     this.labelService.createLabel({ name: name.trim() }).subscribe({
       next: (newLabel) => {
-        // Add to note immediately
         this.toggleLabel(newLabel, event);
         this.labelSearchQuery.set('');
       },
@@ -168,8 +173,6 @@ export class NoteEditDialogComponent implements OnInit {
     this.showColorPicker.set(false);
     this.showMoreMenu.set(false);
     this.showLabelPicker.set(false);
-    this.showCollaboratorDialog.set(false);
-    this.showReminderDialog.set(false);
   }
 
   isLabelAttached(labelId: number): boolean {
@@ -203,18 +206,6 @@ export class NoteEditDialogComponent implements OnInit {
       },
       error: (err) => console.error('Failed to remove label:', err)
     });
-  }
-
-  openCollaboratorDialog(event: Event): void {
-    event.stopPropagation();
-    this.closeMenus();
-    this.showCollaboratorDialog.set(true);
-  }
-
-  openReminderDialog(event: Event): void {
-    event.stopPropagation();
-    this.closeMenus();
-    this.showReminderDialog.set(true);
   }
 
   copyNote(event: Event): void {

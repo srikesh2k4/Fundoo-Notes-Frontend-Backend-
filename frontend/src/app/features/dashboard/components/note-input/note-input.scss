@@ -1,0 +1,329 @@
+// Variables
+$color-white: #fff;
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-hover: rgba(0, 0, 0, 0.08);
+$color-focus: #1a73e8;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+$border-radius: 8px;
+$border-radius-full: 50%;
+
+$transition-fast: 0.2s ease;
+$shadow-card: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+$shadow-elevated: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+
+$z-index-dropdown: 100;
+
+// Container
+.note-input-container {
+  max-width: 600px;
+  margin: 0 auto 32px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $shadow-card;
+  background: $color-white;
+  transition: box-shadow $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(60, 64, 67, 0.3), 0 6px 12px 4px rgba(60, 64, 67, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    margin: 0 16px 24px;
+  }
+}
+
+// Collapsed State
+.note-input-collapsed {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  cursor: text;
+  gap: $spacing-lg;
+
+  .collapsed-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: $color-text-secondary;
+    background: transparent;
+    cursor: text;
+    font-family: 'Roboto', Arial, sans-serif;
+    pointer-events: none;
+
+    &::placeholder {
+      color: $color-text-secondary;
+    }
+  }
+
+  .collapsed-icons {
+    display: flex;
+    gap: $spacing-xs;
+  }
+}
+
+// Expanded State
+.note-input-expanded {
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// Input Fields
+.title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-text;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: transparent;
+  padding: 0;
+
+  &::placeholder {
+    color: $color-text-secondary;
+    font-weight: 400;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.content-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: $color-text;
+  resize: none;
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+  background: transparent;
+  padding: 0;
+  min-height: 60px;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// Action Bar
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-top: $spacing-sm;
+}
+
+.action-icons {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+// Action Buttons
+.action-btn,
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: $border-radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: $color-text;
+    opacity: 0.71;
+    transition: opacity $transition-fast;
+  }
+
+  &:hover svg {
+    opacity: 1;
+  }
+}
+
+// Color Picker
+.color-picker-container {
+  position: relative;
+}
+
+.color-picker {
+  position: absolute;
+  bottom: calc(100% + $spacing-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $shadow-elevated;
+  padding: $spacing-sm;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  z-index: $z-index-dropdown;
+  animation: popupFadeUp 0.15s ease-out;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid $color-white;
+    filter: drop-shadow(0 2px 1px rgba(60, 64, 67, 0.15));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@keyframes popupFadeUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.color-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-full;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color $transition-fast, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    border-color: $color-focus;
+
+    svg {
+      display: block;
+    }
+  }
+
+  &:first-child {
+    border: 2px solid $color-border;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: $color-focus;
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// Close Button
+.close-btn {
+  background: none;
+  border: none;
+  padding: $spacing-sm $spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: background-color $transition-fast;
+  font-family: 'Roboto', Arial, sans-serif;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .action-bar {
+    flex-wrap: wrap;
+  }
+
+  .close-btn {
+    width: 100%;
+    padding: $spacing-md;
+  }
+}

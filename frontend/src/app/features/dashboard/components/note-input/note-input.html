@@ -1,0 +1,129 @@
+<div class="note-input-container" 
+     [style.background-color]="selectedColor()"
+     (click)="closeMenus()">
+  
+  <!-- Collapsed State -->
+  <div class="note-input-collapsed" 
+       *ngIf="!isExpanded()"
+       (click)="expand()">
+    <input 
+      type="text" 
+      placeholder="Take a note..." 
+      class="collapsed-input"
+      readonly>
+    
+    <div class="collapsed-icons">
+      <button class="icon-btn" aria-label="New list" title="New list">
+        <svg viewBox="0 0 24 24">
+          <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7z"></path>
+        </svg>
+      </button>
+
+      <button class="icon-btn" aria-label="New note with image" title="New note with image">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"></path>
+        </svg>
+      </button>
+
+      <button class="icon-btn" aria-label="New note with drawing" title="New note with drawing">
+        <svg viewBox="0 0 24 24">
+          <path d="M18.35 2.85l2.8 2.8c.2.2.2.51 0 .71l-2.8 2.8-.71-.71 2.15-2.15-2.15-2.15-.71.71-2.8-2.8c-.2-.2-.2-.51 0-.71l2.8-2.8c.2-.2.51-.2.71 0zM.85 17.15c-.2.2-.2.51 0 .71l2.8 2.8c.2.2.51.2.71 0l13-13-.71-.71-13 13zm16-16l-2.15 2.15 2.15 2.15.71-.71-2.15-2.15 2.15-2.15-.71-.71zM2.85 21.85L0 19l1.41-1.41L4.26 20.44l-.7.7-.71.71z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Expanded State -->
+  <div class="note-input-expanded" *ngIf="isExpanded()">
+    
+    <!-- Title Input -->
+    <input 
+      type="text" 
+      [(ngModel)]="title"
+      placeholder="Title" 
+      class="title-input"
+      (click)="$event.stopPropagation()">
+
+    <!-- Content Input -->
+    <textarea 
+      [(ngModel)]="content"
+      placeholder="Take a note..." 
+      class="content-input"
+      rows="3"
+      (click)="$event.stopPropagation()"></textarea>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="action-icons">
+        
+        <!-- Reminder Button -->
+        <button class="action-btn" aria-label="Remind me" title="Remind me">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 17v-6c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v6H4v2h16v-2h-2zm-2 0H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6zm-4 5c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"></path>
+          </svg>
+        </button>
+
+        <!-- Collaborator Button -->
+        <button class="action-btn" aria-label="Collaborator" title="Collaborator">
+          <svg viewBox="0 0 24 24">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z"></path>
+          </svg>
+        </button>
+
+        <!-- Color Picker -->
+        <div class="color-picker-container">
+          <button class="action-btn" 
+                  aria-label="Background options" 
+                  title="Background options"
+                  (click)="toggleColorPicker($event)">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 22C6.49 22 2 17.51 2 12S6.49 2 12 2s10 4.04 10 9c0 3.31-2.69 6-6 6h-1.77c-.28 0-.5.22-.5.5 0 .12.05.23.13.33.41.47.64 1.06.64 1.67 0 1.38-1.12 2.5-2.5 2.5zm0-18c-4.41 0-8 3.59-8 8s3.59 8 8 8c.28 0 .5-.22.5-.5 0-.16-.08-.28-.14-.35-.41-.46-.63-1.05-.63-1.65 0-1.38 1.12-2.5 2.5-2.5H16c2.21 0 4-1.79 4-4 0-3.86-3.59-7-8-7z"></path>
+              <circle cx="6.5" cy="11.5" r="1.5"></circle>
+              <circle cx="9.5" cy="7.5" r="1.5"></circle>
+              <circle cx="14.5" cy="7.5" r="1.5"></circle>
+              <circle cx="17.5" cy="11.5" r="1.5"></circle>
+            </svg>
+          </button>
+
+          <!-- Color Picker Palette -->
+          <div class="color-picker" *ngIf="showColorPicker()">
+            <button *ngFor="let color of colors"
+                    class="color-btn"
+                    [style.background-color]="color.value"
+                    [class.selected]="selectedColor() === color.value"
+                    [attr.title]="color.name"
+                    (click)="selectColor(color.value, $event)">
+              <svg viewBox="0 0 24 24" *ngIf="selectedColor() === color.value">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Button -->
+        <button class="action-btn" aria-label="Add image" title="Add image">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"></path>
+          </svg>
+        </button>
+
+        <!-- Archive Button -->
+        <button class="action-btn" aria-label="Archive" title="Archive">
+          <svg viewBox="0 0 24 24">
+            <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.83 1H5.42l.82-1zM5 19V8h14v11H5zm11-5.5l-4 4-4-4 1.41-1.41L11 13.67V10h2v3.67l1.59-1.59L16 13.5z"></path>
+          </svg>
+        </button>
+
+        <!-- More Options Button -->
+        <button class="action-btn" aria-label="More" title="More">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Close Button -->
+      <button class="close-btn" (click)="close()">Close</button>
+    </div>
+  </div>
+</div>

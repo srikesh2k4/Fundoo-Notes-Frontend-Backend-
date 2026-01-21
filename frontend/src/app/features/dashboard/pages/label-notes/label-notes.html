@@ -1,4 +1,5 @@
 <div class="label-notes-container">
+  <!-- Navbar -->
   <app-navbar
     [isGridView]="isGridView()"
     (menuToggle)="toggleSidebar()"
@@ -7,12 +8,21 @@
   </app-navbar>
 
   <div class="label-notes-body">
+    <!-- Sidebar -->
     <app-sidebar 
       [isExpanded]="sidebarExpanded()" 
       [activeItem]="'label-' + labelName()">
     </app-sidebar>
 
+    <!-- Main Content -->
     <main class="label-notes-content" [class.sidebar-expanded]="sidebarExpanded()">
+      
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading()">
+        <div class="spinner"></div>
+        <p>Loading notes...</p>
+      </div>
+
       <!-- Label Not Found State -->
       <div class="label-not-found" *ngIf="!labelExists() && !isLoading()">
         <svg viewBox="0 0 24 24" class="empty-icon">
@@ -22,56 +32,77 @@
         <p>The label "{{ labelName() }}" doesn't exist</p>
       </div>
 
-      <!-- Show content only if label exists -->
-      <ng-container *ngIf="labelExists()">
+      <!-- Content when label exists -->
+      <ng-container *ngIf="labelExists() && !isLoading()">
+        
         <!-- Label Header -->
         <div class="page-header">
-          <svg viewBox="0 0 24 24" class="header-icon">
-            <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path>
-          </svg>
-          <h1 class="label-title">{{ labelName() }}</h1>
-          <!-- Note count -->
-          <span class="label-subtitle" *ngIf="!isLoading() && getNoteCount() > 0">
-            {{ getNoteCount() }} {{ getNoteCount() === 1 ? 'note' : 'notes' }}
-          </span>
+          <div class="header-content">
+            <svg viewBox="0 0 24 24" class="header-icon">
+              <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path>
+            </svg>
+            <h1 class="label-title">{{ labelName() }}</h1>
+          </div>
+          <span class="note-count">{{ getNoteCount() }} {{ getNoteCount() === 1 ? 'note' : 'notes' }}</span>
+        </div>
+
+        <!-- Note Input Section (only show when not searching) -->
+        <div class="note-input-wrapper" *ngIf="!searchQuery()">
+          <app-note-input 
+            [defaultLabelId]="currentLabel()?.id"
+            (noteCreated)="onNoteCreated($event)">
+          </app-note-input>
         </div>
 
         <!-- Search Results Header -->
         <div class="search-header" *ngIf="searchQuery()">
           <span class="search-results-text">
-            Search results for "{{ searchQuery() }}" in {{ labelName() }}
+            Search results for "<strong>{{ searchQuery() }}</strong>" in {{ labelName() }}
+          </span>
+          <span class="search-results-count">
+            {{ filteredNotes().length }} {{ filteredNotes().length === 1 ? 'result' : 'results' }}
           </span>
         </div>
 
-        <!-- Loading State -->
-        <div class="loading-state" *ngIf="isLoading()">
-          <div class="spinner"></div>
-          <p>Loading notes...</p>
-        </div>
-
-        <!-- Label Notes Grid -->
-        <section class="notes-section" *ngIf="!isLoading() && filteredNotes().length > 0">
-          <div class="notes-grid" [class.list-view]="!isGridView()">
+        <!-- Notes Grid -->
+        <section class="notes-section" *ngIf="filteredNotes().length > 0">
+          <div 
+            class="notes-grid" 
+            [class.grid-view]="isGridView()"
+            [class.list-view]="!isGridView()">
             <app-note-card
               *ngFor="let note of filteredNotes(); trackBy: trackByNoteId"
               [note]="note"
-              (noteClicked)="onNoteClick($event)"
+              (click)="onNoteClick(note)"
               (noteUpdated)="onNoteUpdated()">
             </app-note-card>
           </div>
         </section>
 
         <!-- Empty State -->
-        <div class="empty-state" *ngIf="!isLoading() && filteredNotes().length === 0">
+        <div class="empty-state" *ngIf="filteredNotes().length === 0">
+          <!-- Icon for no notes with label -->
           <svg viewBox="0 0 24 24" class="empty-icon" *ngIf="!searchQuery()">
             <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path>
           </svg>
+          
+          <!-- Icon for search with no results -->
           <svg viewBox="0 0 24 24" class="empty-icon" *ngIf="searchQuery()">
             <path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path>
           </svg>
-          <p *ngIf="!searchQuery()">No notes with label "{{ labelName() }}" yet</p>
-          <p *ngIf="searchQuery()">No matching notes found</p>
+          
+          <p class="empty-message" *ngIf="!searchQuery()">
+            No notes with label "{{ labelName() }}" yet
+          </p>
+          <p class="empty-message" *ngIf="searchQuery()">
+            No matching notes found for "{{ searchQuery() }}"
+          </p>
+          
+          <p class="empty-hint" *ngIf="!searchQuery()">
+            Create a note above to get started
+          </p>
         </div>
+
       </ng-container>
     </main>
   </div>
