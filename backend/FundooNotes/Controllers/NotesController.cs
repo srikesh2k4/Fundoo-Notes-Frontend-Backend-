@@ -19,9 +19,15 @@ namespace FundooNotes.Controllers
             _noteService = noteService;
             _logger = logger;
         }
+
+        /// <summary>
         /// Get all notes for logged-in user
+        /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(ApiResponse<IEnumerable<NoteResponseDto>>),
+            StatusCodes.Status200OK
+        )]
         public async Task<IActionResult> GetAll()
         {
             var userId = GetUserId();
@@ -29,13 +35,17 @@ namespace FundooNotes.Controllers
 
             var notes = await _noteService.GetAllAsync(userId);
 
-            return Ok(ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(
-                notes, $"Retrieved {notes.Count()} notes"));
+            return Ok(
+                ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(
+                    notes,
+                    $"Retrieved {notes.Count()} notes"
+                )
+            );
         }
 
-
+        /// <summary>
         /// Get note by ID
-
+        /// </summary>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -49,12 +59,14 @@ namespace FundooNotes.Controllers
             if (note == null)
                 return NotFound(new ErrorResponse("Note not found", "NOT_FOUND"));
 
-            return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note retrieved successfully"));
+            return Ok(
+                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note retrieved successfully")
+            );
         }
 
-
+        /// <summary>
         /// Create a new note
-
+        /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -65,12 +77,15 @@ namespace FundooNotes.Controllers
 
             var note = await _noteService.CreateAsync(dto, userId);
 
-            return StatusCode(StatusCodes.Status201Created,
-                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note created successfully"));
+            return StatusCode(
+                StatusCodes.Status201Created,
+                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note created successfully")
+            );
         }
 
-   
+        /// <summary>
         /// Update a note
+        /// </summary>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -81,22 +96,44 @@ namespace FundooNotes.Controllers
 
             var note = await _noteService.UpdateAsync(id, dto, userId);
 
-            return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note updated successfully"));
+            return Ok(
+                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note updated successfully")
+            );
         }
 
-
+        /// <summary>
+        /// Add label to note
+        /// </summary>
         [HttpPost("{noteId}/labels/{labelId}")]
-[ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
-public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
-{
-    var userId = GetUserId();
-    _logger.LogInformation("Adding label {LabelId} to note {NoteId}", labelId, noteId);
+        [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
+        {
+            var userId = GetUserId();
+            _logger.LogInformation("Adding label {LabelId} to note {NoteId}", labelId, noteId);
 
-    var result = await _noteService.AddLabelToNoteAsync(noteId, labelId, userId);
-    return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(result, "Label added successfully"));
-}
+            var result = await _noteService.AddLabelToNoteAsync(noteId, labelId, userId);
+            return Ok(
+                ApiResponse<NoteResponseDto>.SuccessResponse(result, "Label added successfully")
+            );
+        }
 
+        /// <summary>
+        /// Remove label from note
+        /// </summary>
+        [HttpDelete("{noteId}/labels/{labelId}")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveLabelFromNote(int noteId, int labelId)
+        {
+            var userId = GetUserId();
+            _logger.LogInformation("Removing label {LabelId} from note {NoteId}", labelId, noteId);
+
+            await _noteService.RemoveLabelFromNoteAsync(noteId, labelId, userId);
+            return Ok(ApiResponse.SuccessResponse("Label removed successfully"));
+        }
+
+        /// <summary>
         /// Delete a note (soft delete)
+        /// </summary>
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
@@ -110,26 +147,37 @@ public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
             return Ok(ApiResponse.SuccessResponse("Note deleted successfully"));
         }
 
-
+        /// <summary>
         /// Search notes
-
+        /// </summary>
         [HttpGet("search")]
-        [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(ApiResponse<IEnumerable<NoteResponseDto>>),
+            StatusCodes.Status200OK
+        )]
         public async Task<IActionResult> Search([FromQuery] string query)
         {
             var userId = GetUserId();
-            _logger.LogInformation("Searching notes for user {UserId} with query: {Query}", userId, query);
+            _logger.LogInformation(
+                "Searching notes for user {UserId} with query: {Query}",
+                userId,
+                query
+            );
 
             var dto = new SearchNotesDto { Query = query };
             var notes = await _noteService.SearchAsync(dto, userId);
 
-            return Ok(ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(
-                notes, $"Found {notes.Count()} notes"));
+            return Ok(
+                ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(
+                    notes,
+                    $"Found {notes.Count()} notes"
+                )
+            );
         }
 
-
+        /// <summary>
         /// Toggle pin status
-
+        /// </summary>
         [HttpPatch("{id}/pin")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> TogglePin(int id)
@@ -141,9 +189,9 @@ public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
             return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Pin status updated"));
         }
 
-
+        /// <summary>
         /// Toggle archive status
-
+        /// </summary>
         [HttpPatch("{id}/archive")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ToggleArchive(int id)
@@ -155,9 +203,9 @@ public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
             return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Archive status updated"));
         }
 
-
+        /// <summary>
         /// Update note color
-
+        /// </summary>
         [HttpPatch("{id}/color")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateColor(int id, [FromBody] UpdateNoteColorDto dto)
@@ -166,11 +214,14 @@ public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
             _logger.LogInformation("Updating color for note {NoteId}", id);
 
             var note = await _noteService.UpdateColorAsync(id, dto, userId);
-            return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Color updated successfully"));
+            return Ok(
+                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Color updated successfully")
+            );
         }
 
-
+        /// <summary>
         /// Toggle trash status
+        /// </summary>
         [HttpPatch("{id}/trash")]
         [ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ToggleTrash(int id)
@@ -179,39 +230,36 @@ public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
             _logger.LogInformation("Toggling trash for note {NoteId}", id);
 
             var note = await _noteService.ToggleTrashAsync(id, userId);
-            return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note moved to/from trash"));
+            return Ok(
+                ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note moved to/from trash")
+            );
         }
 
-        [HttpDelete("{noteId}/labels/{labelId}")]
-[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-public async Task<IActionResult> RemoveLabelFromNote(int noteId, int labelId)
-{
-    var userId = GetUserId();
-    _logger.LogInformation("Removing label {LabelId} from note {NoteId}", labelId, noteId);
-
-    await _noteService.RemoveLabelFromNoteAsync(noteId, labelId, userId);
-    return Ok(ApiResponse.SuccessResponse("Label removed successfully"));
-}
-
-private int GetUserId()
-{
-    var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-    return int.Parse(userIdClaim ?? "0");
-}
+        /// <summary>
         /// Get all trashed notes
+        /// </summary>
         [HttpGet("trash")]
-        [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(ApiResponse<IEnumerable<NoteResponseDto>>),
+            StatusCodes.Status200OK
+        )]
         public async Task<IActionResult> GetTrashed()
         {
             var userId = GetUserId();
             _logger.LogInformation("Getting trashed notes for user {UserId}", userId);
 
             var notes = await _noteService.GetTrashedAsync(userId);
-            return Ok(ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(notes, "Trashed notes retrieved"));
+            return Ok(
+                ApiResponse<IEnumerable<NoteResponseDto>>.SuccessResponse(
+                    notes,
+                    "Trashed notes retrieved"
+                )
+            );
         }
 
-
+        /// <summary>
         /// Restore note from trash
+        /// </summary>
         [HttpPost("{id}/restore")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Restore(int id)
@@ -223,8 +271,9 @@ private int GetUserId()
             return Ok(ApiResponse.SuccessResponse("Note restored successfully"));
         }
 
-
+        /// <summary>
         /// Permanently delete a note
+        /// </summary>
         [HttpDelete("{id}/permanent")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeletePermanently(int id)
@@ -236,8 +285,9 @@ private int GetUserId()
             return Ok(ApiResponse.SuccessResponse("Note permanently deleted"));
         }
 
-
+        /// <summary>
         /// Empty trash
+        /// </summary>
         [HttpDelete("trash/empty")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> EmptyTrash()
@@ -249,8 +299,9 @@ private int GetUserId()
             return Ok(ApiResponse.SuccessResponse("Trash emptied successfully"));
         }
 
-
+        /// <summary>
         /// Bulk delete notes
+        /// </summary>
         [HttpPost("bulk-delete")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteDto dto)
@@ -262,9 +313,12 @@ private int GetUserId()
             return Ok(ApiResponse.SuccessResponse("Notes deleted successfully"));
         }
 
+        // ✅ FIXED: Only ONE GetUserId() method now
         private int GetUserId()
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = User.FindFirst(
+                System.Security.Claims.ClaimTypes.NameIdentifier
+            )?.Value;
             return int.Parse(userIdClaim ?? "0");
         }
     }

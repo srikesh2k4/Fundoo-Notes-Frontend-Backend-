@@ -3,6 +3,7 @@ using BusinessLayer.Interfaces.Services;
 using BusinessLayer.Rules;
 using DataBaseLayer.Entities;
 using DataBaseLayer.Interfaces;
+using ModelLayer.DTOs.Labels; // ✅ ADD THIS
 using ModelLayer.DTOs.Notes;
 
 namespace BusinessLayer.Services
@@ -12,67 +13,84 @@ namespace BusinessLayer.Services
         private readonly INoteRepository _noteRepository;
         private readonly ICollaboratorRepository _collaboratorRepository;
 
-        public NoteService(INoteRepository noteRepository, ICollaboratorRepository collaboratorRepository)
+        public NoteService(
+            INoteRepository noteRepository,
+            ICollaboratorRepository collaboratorRepository
+        )
         {
             _noteRepository = noteRepository;
             _collaboratorRepository = collaboratorRepository;
         }
 
-        // Add these methods to your NoteService.cs class
+        // ✅ IMPROVED: Add label to note with proper validation
+        public async Task<NoteResponseDto> AddLabelToNoteAsync(int noteId, int labelId, int userId)
+        {
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
+                ?? throw new NotFoundException("Note not found");
 
-public async Task<NoteResponseDto> AddLabelToNoteAsync(int noteId, int labelId, int userId)
-{
-    var note = await _noteRepository.GetByIdAsync(noteId)
-        ?? throw new NotFoundException("Note not found");
+            // Check permission (owner or collaborator with edit permission)
+            if (note.UserId != userId)
+            {
+                var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(
+                    noteId,
+                    userId
+                );
+                if (
+                    collaborator == null
+                    || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit
+                )
+                    throw new UnauthorizedException("You don't have permission to edit this note");
+            }
 
-    // Check permission (owner or collaborator with edit permission)
-    if (note.UserId != userId)
-    {
-        var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(noteId, userId);
-        if (collaborator == null || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit)
-            throw new UnauthorizedException("You don't have permission to edit this note");
-    }
+            // Check if label already attached
+            if (note.NoteLabels.Any(nl => nl.LabelId == labelId))
+                throw new ValidationException("Label already attached to this note");
 
-    // Check if label already attached
-    if (note.NoteLabels.Any(nl => nl.LabelId == labelId))
-        throw new ValidationException("Label already attached to this note");
+            // Add label
+            var noteLabel = new NoteLabel
+            {
+                NoteId = noteId,
+                LabelId = labelId,
+                CreatedAt = DateTime.UtcNow,
+            };
 
-    // Add label
-    var noteLabel = new NoteLabel
-    {
-        NoteId = noteId,
-        LabelId = labelId,
-        CreatedAt = DateTime.UtcNow
-    };
+            note.NoteLabels.Add(noteLabel);
+            await _noteRepository.SaveAsync();
 
-    note.NoteLabels.Add(noteLabel);
-    await _noteRepository.SaveAsync();
+            // ✅ IMPORTANT: Reload note with labels included
+            note = await _noteRepository.GetByIdAsync(noteId);
+            return MapToDto(note!);
+        }
 
-    // Reload note with labels
-    note = await _noteRepository.GetByIdAsync(noteId);
-    return MapToDto(note!);
-}
+        // ✅ IMPROVED: Remove label from note
+        public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
+        {
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
+                ?? throw new NotFoundException("Note not found");
 
-public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
-{
-    var note = await _noteRepository.GetByIdAsync(noteId)
-        ?? throw new NotFoundException("Note not found");
+            // Check permission (owner or collaborator with edit permission)
+            if (note.UserId != userId)
+            {
+                var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(
+                    noteId,
+                    userId
+                );
+                if (
+                    collaborator == null
+                    || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit
+                )
+                    throw new UnauthorizedException("You don't have permission to edit this note");
+            }
 
-    // Check permission (owner or collaborator with edit permission)
-    if (note.UserId != userId)
-    {
-        var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(noteId, userId);
-        if (collaborator == null || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit)
-            throw new UnauthorizedException("You don't have permission to edit this note");
-    }
+            var noteLabel = note.NoteLabels.FirstOrDefault(nl => nl.LabelId == labelId);
+            if (noteLabel == null)
+                throw new NotFoundException("Label not found on this note");
 
-    var noteLabel = note.NoteLabels.FirstOrDefault(nl => nl.LabelId == labelId);
-    if (noteLabel == null)
-        throw new NotFoundException("Label not found on this note");
-
-    note.NoteLabels.Remove(noteLabel);
-    await _noteRepository.SaveAsync();
-}
+            note.NoteLabels.Remove(noteLabel);
+            await _noteRepository.SaveAsync();
+        }
 
         public async Task<IEnumerable<NoteResponseDto>> GetAllAsync(int userId)
         {
@@ -107,7 +125,7 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
                 IsPinned = false,
                 IsArchived = false,
                 IsDeleted = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
 
             await _noteRepository.AddAsync(note);
@@ -118,14 +136,21 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task<NoteResponseDto> UpdateAsync(int noteId, UpdateNoteDto dto, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             // Check permission (owner or collaborator with edit permission)
             if (note.UserId != userId)
             {
-                var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(noteId, userId);
-                if (collaborator == null || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit)
+                var collaborator = await _collaboratorRepository.GetByNoteAndUserAsync(
+                    noteId,
+                    userId
+                );
+                if (
+                    collaborator == null
+                    || collaborator.Permission != DataBaseLayer.Enums.PermissionLevel.Edit
+                )
                     throw new UnauthorizedException("You don't have permission to edit this note");
             }
 
@@ -153,7 +178,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task DeleteAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -202,7 +228,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task<NoteResponseDto> TogglePinAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -218,7 +245,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task<NoteResponseDto> ToggleArchiveAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -232,11 +260,16 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
             return MapToDto(note);
         }
 
-        public async Task<NoteResponseDto> UpdateColorAsync(int noteId, UpdateNoteColorDto dto, int userId)
+        public async Task<NoteResponseDto> UpdateColorAsync(
+            int noteId,
+            UpdateNoteColorDto dto,
+            int userId
+        )
         {
             NoteRules.ValidateColor(dto.Color);
 
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -252,7 +285,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task<NoteResponseDto> ToggleTrashAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -275,7 +309,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task RestoreFromTrashAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -293,7 +328,8 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
 
         public async Task DeletePermanentlyAsync(int noteId, int userId)
         {
-            var note = await _noteRepository.GetByIdAsync(noteId)
+            var note =
+                await _noteRepository.GetByIdAsync(noteId)
                 ?? throw new NotFoundException("Note not found");
 
             if (note.UserId != userId)
@@ -309,6 +345,7 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
             await _noteRepository.SaveAsync();
         }
 
+        // ✅ FIXED: MapToDto now includes Labels
         private static NoteResponseDto MapToDto(Note note)
         {
             return new NoteResponseDto
@@ -321,7 +358,18 @@ public async Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId)
                 IsArchived = note.IsArchived,
                 IsDeleted = note.IsDeleted,
                 CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
+                UpdatedAt = note.UpdatedAt,
+                DeletedAt = note.DeletedAt,
+                UserId = note.UserId,
+                // ✅ ADD: Map labels
+                Labels =
+                    note.NoteLabels?.Select(nl => new LabelDto
+                        {
+                            Id = nl.Label.Id,
+                            Name = nl.Label.Name,
+                        })
+                        .ToList()
+                    ?? new List<LabelDto>(),
             };
         }
     }

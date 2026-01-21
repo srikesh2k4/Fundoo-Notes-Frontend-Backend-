@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoteCardComponent } from './note-card';  // ✅ Fixed import
 
-import { NoteCard } from './note-card';
-
-describe('NoteCard', () => {
-  let component: NoteCard;
-  let fixture: ComponentFixture<NoteCard>;
+describe('NoteCardComponent', () => {  // ✅ Fixed name
+  let component: NoteCardComponent;  // ✅ Fixed type
+  let fixture: ComponentFixture<NoteCardComponent>;  // ✅ Fixed type
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NoteCard]
+      imports: [NoteCardComponent]  // ✅ Fixed import
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NoteCard);
+    fixture = TestBed.createComponent(NoteCardComponent);  // ✅ Fixed
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

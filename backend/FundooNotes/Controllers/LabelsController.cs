@@ -1,7 +1,5 @@
-﻿// ========================================
-// FILE: FundooNotes/Controllers/LabelsController.cs (FIXED)
-// ========================================
-using BusinessLayer.Interfaces.Services;
+﻿using BusinessLayer.Interfaces.Services;
+using FundooNotes.Extensions; // ⚠️ ADD THIS - for GetUserId() extension method
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.DTOs.Labels;
@@ -27,16 +25,23 @@ namespace FundooNotes.Controllers
         /// Get all labels for logged-in user
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<IEnumerable<LabelResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(ApiResponse<IEnumerable<LabelResponseDto>>),
+            StatusCodes.Status200OK
+        )]
         public async Task<IActionResult> GetAll()
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId(); // ✅ Use extension method
             _logger.LogInformation("Fetching all labels for user {UserId}", userId);
 
             var labels = await _labelService.GetByUserAsync(userId);
 
-            return Ok(ApiResponse<IEnumerable<LabelResponseDto>>.SuccessResponse(
-                labels, $"Retrieved {labels.Count()} labels"));
+            return Ok(
+                ApiResponse<IEnumerable<LabelResponseDto>>.SuccessResponse(
+                    labels,
+                    $"Retrieved {labels.Count()} labels"
+                )
+            );
         }
 
         /// <summary>
@@ -47,7 +52,7 @@ namespace FundooNotes.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId(); // ✅ Use extension method
             _logger.LogInformation("Fetching label {LabelId} for user {UserId}", id, userId);
 
             var label = await _labelService.GetByIdAsync(id, userId);
@@ -55,7 +60,9 @@ namespace FundooNotes.Controllers
             if (label == null)
                 return NotFound(new ErrorResponse("Label not found", "NOT_FOUND"));
 
-            return Ok(ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label retrieved successfully"));
+            return Ok(
+                ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label retrieved successfully")
+            );
         }
 
         /// <summary>
@@ -66,13 +73,15 @@ namespace FundooNotes.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateLabelDto dto)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId(); // ✅ Use extension method
             _logger.LogInformation("Creating label for user {UserId}", userId);
 
             var label = await _labelService.CreateAsync(dto, userId);
 
-            return StatusCode(StatusCodes.Status201Created,
-                ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label created successfully"));
+            return StatusCode(
+                StatusCodes.Status201Created,
+                ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label created successfully")
+            );
         }
 
         /// <summary>
@@ -83,12 +92,14 @@ namespace FundooNotes.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateLabelDto dto)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId(); // ✅ Use extension method
             _logger.LogInformation("Updating label {LabelId} for user {UserId}", id, userId);
 
             var label = await _labelService.UpdateAsync(id, dto, userId);
 
-            return Ok(ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label updated successfully"));
+            return Ok(
+                ApiResponse<LabelResponseDto>.SuccessResponse(label, "Label updated successfully")
+            );
         }
 
         /// <summary>
@@ -99,18 +110,12 @@ namespace FundooNotes.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId(); // ✅ Use extension method
             _logger.LogInformation("Deleting label {LabelId} for user {UserId}", id, userId);
 
             await _labelService.DeleteAsync(id, userId);
 
             return Ok(ApiResponse.SuccessResponse("Label deleted successfully"));
-        }
-
-        private int GetUserId()
-        {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            return int.Parse(userIdClaim ?? "0");
         }
     }
 }

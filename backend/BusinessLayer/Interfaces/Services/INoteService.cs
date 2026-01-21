@@ -19,5 +19,9 @@ namespace BusinessLayer.Interfaces.Services
         Task RestoreFromTrashAsync(int noteId, int userId);
         Task DeletePermanentlyAsync(int noteId, int userId);
         Task EmptyTrashAsync(int userId);
+
+        // ✅ ADD: Label management methods
+        Task<NoteResponseDto> AddLabelToNoteAsync(int noteId, int labelId, int userId);
+        Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId);
     }
 }

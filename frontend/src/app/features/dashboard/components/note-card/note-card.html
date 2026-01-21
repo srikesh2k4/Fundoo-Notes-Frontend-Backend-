@@ -120,74 +120,51 @@
       </button>
 
       <!-- More Options -->
-<div class="more-menu-container">
-  <button class="action-btn"
-          aria-label="More"
-          title="More"
-          (click)="toggleMoreMenu($event)">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
-    </svg>
-  </button>
+      <div class="more-menu-container">
+        <button class="action-btn"
+                aria-label="More"
+                title="More"
+                (click)="toggleMoreMenu($event)">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
+          </svg>
+        </button>
 
         <!-- More Menu Dropdown -->
-  <div class="more-menu" *ngIf="showMoreMenu()">
-    <button class="menu-item" (click)="deleteNote($event)">
-      <span>Delete note</span>
-    </button>
-    <button class="menu-item" (click)="toggleLabelPicker($event)">
-      <span>Add label</span>
-    </button>
-    <button class="menu-item" (click)="addDrawing($event)">
-      <span>Add drawing</span>
-    </button>
-    <button class="menu-item" (click)="copyNote($event)">
-      <span>Make a copy</span>
-    </button>
-    <button class="menu-item" (click)="showCheckboxes($event)">
-      <span>Show checkboxes</span>
-    </button>
-  </div>
+        <div class="more-menu" *ngIf="showMoreMenu()">
+          <button class="menu-item" (click)="deleteNote($event)">
+            <span>Delete note</span>
+          </button>
+          <button class="menu-item" (click)="toggleLabelPicker($event)">
+            <span>Add label</span>
+          </button>
+          <button class="menu-item" (click)="addDrawing($event)">
+            <span>Add drawing</span>
+          </button>
+          <button class="menu-item" (click)="copyNote($event)">
+            <span>Make a copy</span>
+          </button>
+          <button class="menu-item" (click)="showCheckboxes($event)">
+            <span>Show checkboxes</span>
+          </button>
+        </div>
 
         <!-- Label Picker Dropdown -->
- <div class="label-picker-dropdown" *ngIf="showLabelPicker()" (click)="$event.stopPropagation()">
-    <div class="label-picker-header">Label note</div>
-    <div class="label-picker-list">
-      <div class="label-picker-item" 
-           *ngFor="let label of allLabels()" 
-           (click)="toggleLabel(label, $event)">
-        <input type="checkbox" 
-               [checked]="isLabelAttached(label.id)" 
-               (click)="$event.stopPropagation()"
-               [id]="'label-' + note.id + '-' + label.id">
-        <label [for]="'label-' + note.id + '-' + label.id">{{ label.name }}</label>
-      </div>
-      <div class="label-picker-empty" *ngIf="allLabels().length === 0">
-        <p>No labels yet</p>
-        <small>Create labels from the sidebar</small>
-      </div>
-    </div>
-  </div>
-</div>
-          
+        <div class="label-picker-dropdown" *ngIf="showLabelPicker()" (click)="$event.stopPropagation()">
+          <div class="label-picker-header">Label note</div>
           <div class="label-picker-list">
-            <!-- Filtered Labels -->
-            <div class="label-picker-item" *ngFor="let label of filteredLabels" (click)="toggleLabel(label, $event)">
-              <input type="checkbox" [checked]="isLabelAttached(label.id)" (click)="$event.stopPropagation(); toggleLabel(label, $event)">
-              <span>{{ label.name }}</span>
+            <div class="label-picker-item" 
+                 *ngFor="let label of allLabels()" 
+                 (click)="toggleLabel(label, $event)">
+              <input type="checkbox" 
+                     [checked]="isLabelAttached(label.id)" 
+                     (click)="$event.stopPropagation()"
+                     [id]="'label-' + note.id + '-' + label.id">
+              <label [for]="'label-' + note.id + '-' + label.id">{{ label.name }}</label>
             </div>
-            
-            <!-- Create New Filter Option -->
-            <div class="label-picker-item create-option" 
-                 *ngIf="labelSearchQuery().trim() && filteredLabels.length === 0"
-                 (click)="createLabel(labelSearchQuery(), $event)">
-              <svg viewBox="0 0 24 24" class="plus-icon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
-              <span>Create "<b>{{ labelSearchQuery() }}</b>"</span>
-            </div>
-
-            <!-- Empty State (No labels and no query) -->
-            <div class="label-picker-empty" *ngIf="allLabels().length === 0 && !labelSearchQuery()">
-              No labels yet
+            <div class="label-picker-empty" *ngIf="allLabels().length === 0">
+              <p>No labels yet</p>
+              <small>Create labels from the sidebar</small>
             </div>
           </div>
         </div>
