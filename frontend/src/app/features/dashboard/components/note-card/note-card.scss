@@ -14,6 +14,12 @@ $shadow-elevated: var(--shadow-md);
 $z-index-pin: 1;
 $z-index-dropdown: 100;
 
+// ✅ CRITICAL FIX: Host element for masonry
+:host {
+  display: block;
+  width: 100%;
+}
+
 // Note Card Base
 .note-card {
   background-color: var(--note-default);
@@ -26,7 +32,7 @@ $z-index-dropdown: 100;
   flex-direction: column;
   gap: 12px;
   position: relative;
-  min-height: 60px;
+  // ✅ REMOVED: min-height: 60px; (breaks masonry)
   overflow: visible;
 
   &:hover {
@@ -401,7 +407,7 @@ $z-index-dropdown: 100;
   }
 }
 
-// ✅ NEW: Label Picker Dropdown (above toolbar)
+// Label Picker Dropdown
 .label-picker-dropdown {
   position: absolute;
   bottom: calc(100% + 8px);
