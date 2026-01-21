@@ -469,11 +469,11 @@ $z-index-dropdown: 100;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--scrollbar-thumb);
     border-radius: 4px;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: var(--scrollbar-thumb-hover);
     }
   }
 }

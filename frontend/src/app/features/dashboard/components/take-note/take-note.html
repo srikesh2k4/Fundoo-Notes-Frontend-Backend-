@@ -1,7 +1,7 @@
 <div class="take-note-container">
   <div class="take-note"
        [class.expanded]="isExpanded()"
-       [style.background-color]="selectedColor()">
+       [style.background-color]="selectedColor() === '#ffffff' || selectedColor() === '#FFFFFF' ? null : selectedColor()">
 
     <!-- Collapsed State -->
     <div class="take-note-input" *ngIf="!isExpanded()" (click)="expand()">

@@ -61,6 +61,11 @@
 
   // Overlay
   --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  // Scrollbar (Light Mode)
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb-active: rgba(0, 0, 0, 0.4);
 }
 
 // Theme Variables - Dark Mode
@@ -121,6 +126,11 @@
 
   // Overlay
   --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  // Scrollbar (Dark Mode)
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+  --scrollbar-thumb-active: rgba(255, 255, 255, 0.4);
 }
 
 // CSS Reset & Box Sizing
@@ -284,22 +294,22 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--scrollbar-thumb);
   border-radius: 4px;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: var(--scrollbar-thumb-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--scrollbar-thumb-active);
   }
 }
 
 // Firefox scrollbar
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 // Selection color

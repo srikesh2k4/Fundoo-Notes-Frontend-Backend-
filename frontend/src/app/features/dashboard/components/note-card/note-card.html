@@ -1,5 +1,5 @@
 <div class="note-card"
-     [style.background-color]="note.color"
+     [style.background-color]="note.color === '#ffffff' || note.color === '#FFFFFF' ? null : note.color"
      (click)="onCardClick()"
      (mouseleave)="closeMenus()">
 

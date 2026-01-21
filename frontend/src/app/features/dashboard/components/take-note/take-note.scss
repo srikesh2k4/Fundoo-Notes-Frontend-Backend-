@@ -260,11 +260,11 @@ $z-index-dropdown: 100;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--scrollbar-thumb);
     border-radius: 4px;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: var(--scrollbar-thumb-hover);
     }
   }
 
@@ -318,7 +318,7 @@ $z-index-dropdown: 100;
     flex-shrink: 0;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: var(--bg-active);
     }
 
     &:focus-visible {
@@ -468,7 +468,7 @@ $z-index-dropdown: 100;
   position: relative;
 
   &:hover {
-    border-color: rgba(0, 0, 0, 0.2);
+    border-color: var(--border-color);
     transform: scale(1.1);
   }
 
@@ -499,7 +499,7 @@ $z-index-dropdown: 100;
     background-color: var(--note-default);
 
     &:hover {
-      border-color: rgba(0, 0, 0, 0.3);
+      border-color: var(--border-color);
     }
   }
 
@@ -606,11 +606,11 @@ $z-index-dropdown: 100;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--scrollbar-thumb);
     border-radius: 4px;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: var(--scrollbar-thumb-hover);
     }
   }
 }

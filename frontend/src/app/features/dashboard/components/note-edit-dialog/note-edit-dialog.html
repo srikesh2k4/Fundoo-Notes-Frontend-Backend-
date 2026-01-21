@@ -1,6 +1,6 @@
 <div class="dialog-overlay" (click)="onOverlayClick($event)">
   <div class="note-edit-dialog"
-       [style.background-color]="selectedColor()"
+       [style.background-color]="selectedColor() === '#ffffff' || selectedColor() === '#FFFFFF' ? null : selectedColor()"
        (click)="closeMenus()">
     <!-- Pin Button -->
     <button class="pin-btn"

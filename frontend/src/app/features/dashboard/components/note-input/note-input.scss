@@ -234,7 +234,7 @@ $z-index-dropdown: 100;
   transition: border-color $transition-fast, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    border-color: rgba(0, 0, 0, 0.2);
+    border-color: var(--border-color);
     transform: scale(1.1);
   }
 
@@ -259,7 +259,7 @@ $z-index-dropdown: 100;
     border: 2px solid var(--border-color);
 
     &:hover {
-      border-color: rgba(0, 0, 0, 0.3);
+      border-color: var(--border-color);
     }
   }
 
