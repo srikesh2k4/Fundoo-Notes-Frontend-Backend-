@@ -31,7 +31,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupNotesSubscription();
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 
   ngOnDestroy(): void {
@@ -77,7 +77,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   }
 
   onNoteUpdated(): void {
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 
   onNoteClick(note: Note): void {
@@ -88,6 +88,6 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   closeEditDialog(): void {
     this.showEditDialog.set(false);
     this.selectedNote.set(null);
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 }

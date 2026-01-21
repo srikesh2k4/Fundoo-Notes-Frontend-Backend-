@@ -43,7 +43,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
     
     // Initial fetch
-    this.labelService.refreshLabels();
+    this.labelService.loadLabels();
   }
 
   createLabel(): void {
@@ -56,7 +56,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.newLabelName = '';
           this.isCreatingLabel.set(false);
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Failed to create label', err);
           this.isCreatingLabel.set(false);
         }
@@ -75,7 +75,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         next: () => {
           this.cancelEditLabel();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Failed to update label', err);
         }
       });
@@ -86,7 +86,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     if (!confirm(`Delete label "${label.name}"?`)) return;
 
     const sub = this.labelService.deleteLabel(label.id).subscribe({
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to delete label', err);
       }
     });

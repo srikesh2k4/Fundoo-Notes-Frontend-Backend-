@@ -39,7 +39,7 @@
   <!-- Trash Actions -->
   <div class="note-footer" *ngIf="isTrash">
     <div class="note-actions trash-actions">
-      <button class="action-btn" aria-label="Delete forever" title="Delete forever" (click)="deletePermanently($event)">
+      <button class="action-btn" aria-label="Delete forever" title="Delete forever" (click)="permanentlyDelete($event)">
         <svg viewBox="0 0 24 24">
           <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
         </svg>
@@ -91,7 +91,7 @@
                   [style.background-color]="color.value"
                   [class.selected]="note.color === color.value"
                   [attr.title]="color.name"
-                  (click)="updateColor(color.value, $event)">
+                  (click)="updateNoteColor(color.value, $event)">
             <svg viewBox="0 0 24 24" *ngIf="note.color === color.value">
               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
             </svg>

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NoteService } from '../../../../core/services/note.service';
 import { LabelService } from '../../../../core/services/label.service';
-import { Note } from '../../../../core/models/note.model';
+import { Note, CreateNoteDto } from '../../../../core/models/note.model';
 import { Label } from '../../../../core/models/label.model';
 import { NoteCardComponent } from '../../../dashboard/components/note-card/note-card';
 import { NoteInputComponent } from '../../components/note-input/note-input';
@@ -23,7 +23,6 @@ import { NoteEditDialogComponent } from '../../../dashboard/components/note-edit
     SidebarComponent,
     NoteEditDialogComponent
   ],
-  // frontend/src/app/features/dashboard/pages/label-notes/label-notes.html
   templateUrl: './label-notes.html',
   styleUrls: ['./label-notes.scss']
 })
@@ -130,30 +129,31 @@ export class LabelNotesComponent implements OnInit {
   }
 
   onNoteCreated(noteData: { title: string; content: string; color: string }): void {
-    // Create note with the current label attached
     const label = this.currentLabel();
     
-    if (label) {
-      const newNote: Partial<Note> = {
-        title: noteData.title,
-        content: noteData.content,
-        color: noteData.color,
-        labels: [label],
-        isPinned: false,
-        isArchived: false,
-        isDeleted: false
-      };
-
-      // Call note service to create the note
-      this.noteService.createNote(newNote as Note).subscribe({
-        next: () => {
-          // Notes will be updated automatically via the observable
-        },
-        error: (error) => {
-          console.error('Error creating note:', error);
-        }
-      });
+    if (!label) {
+      console.error('No label selected');
+      return;
     }
+
+    // ✅ FIX: Create proper CreateNoteDto
+    const createDto: CreateNoteDto = {
+      title: noteData.title || undefined,
+      content: noteData.content || undefined,
+      color: noteData.color,
+      labelIds: [label.id] // ✅ Pass label IDs instead of full objects
+    };
+
+    // Call note service to create the note
+    this.noteService.createNote(createDto).subscribe({
+      next: () => {
+        // Notes will be updated automatically via the observable
+        console.log('Note created successfully with label');
+      },
+      error: (error: any) => {
+        console.error('Error creating note:', error);
+      }
+    });
   }
 
   onNoteUpdated(): void {

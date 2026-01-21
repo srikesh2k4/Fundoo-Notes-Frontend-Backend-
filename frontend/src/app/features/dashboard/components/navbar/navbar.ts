@@ -49,7 +49,7 @@ export class NavbarComponent implements OnInit {
   }
 
   loadUserProfile(): void {
-    const user = this.authService.getUser();
+    const user = this.authService.getCurrentUser();
     if (user) {
       this.userProfile.set({
         name: user.name || 'User',
@@ -95,7 +95,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onRefreshClick(): void {
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
     this.refresh.emit();
   }
 

@@ -49,12 +49,13 @@ export class TrashComponent implements OnInit, OnDestroy {
   loadTrashedNotes(): void {
     this.isLoading.set(true);
     this.noteService.getTrashedNotes().subscribe({
-      next: (notes) => {
+      next: (response) => {
+        const notes = response.data || [];
         this.trashedNotes.set(notes);
         this.filterNotes();
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to load trashed notes:', err);
         this.trashedNotes.set([]);
         this.filteredNotes.set([]);
@@ -78,23 +79,23 @@ export class TrashComponent implements OnInit, OnDestroy {
   }
 
   restoreNote(note: Note): void {
-    this.noteService.restoreFromTrash(note.id).subscribe({
+    this.noteService.restoreNote(note.id).subscribe({
       next: () => {
         this.trashedNotes.update(notes => notes.filter(n => n.id !== note.id));
         this.filterNotes();
       },
-      error: (err) => console.error('Failed to restore note:', err)
+      error: (err: any) => console.error('Failed to restore note:', err)
     });
   }
 
-  deletePermanently(note: Note): void {
+  permanentlyDelete(note: Note): void {
     if (confirm('This will permanently delete the note. Are you sure?')) {
-      this.noteService.deletePermanently(note.id).subscribe({
+      this.noteService.permanentlyDelete(note.id).subscribe({
         next: () => {
           this.trashedNotes.update(notes => notes.filter(n => n.id !== note.id));
           this.filterNotes();
         },
-        error: (err) => console.error('Failed to delete note:', err)
+        error: (err: any) => console.error('Failed to delete note:', err)
       });
     }
   }
@@ -108,7 +109,7 @@ export class TrashComponent implements OnInit, OnDestroy {
           this.trashedNotes.set([]);
           this.filteredNotes.set([]);
         },
-        error: (err) => console.error('Failed to empty trash:', err)
+        error: (err: any) => console.error('Failed to empty trash:', err)
       });
     }
   }

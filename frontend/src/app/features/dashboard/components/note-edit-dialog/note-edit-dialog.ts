@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NoteService } from '../../../../core/services/note.service';
 import { LabelService } from '../../../../core/services/label.service';
-import { Note, LabelDto } from '../../../../core/models/note.model';
+import { Note, LabelDto, UpdateNoteDto, UpdateNoteColorDto, CreateNoteDto } from '../../../../core/models/note.model';
 import { Label } from '../../../../core/models/label.model';
 
 // Google Keep color palette
@@ -59,7 +59,7 @@ export class NoteEditDialogComponent implements OnInit {
     this.labelService.labels$.subscribe(labels => {
       this.allLabels.set(labels);
     });
-    this.labelService.refreshLabels();
+    this.labelService.loadLabels();
   }
 
   saveAndClose(): void {
@@ -67,23 +67,35 @@ export class NoteEditDialogComponent implements OnInit {
 
     this.isSaving.set(true);
 
-    // Update note
-    this.noteService.updateNote(this.note.id, {
+    // Prepare update DTO
+    const updateDto: UpdateNoteDto = {
       title: this.editTitle.trim() || undefined,
       content: this.editContent.trim() || undefined
-    }).subscribe({
-      next: () => {
+    };
+
+    // Update note
+    this.noteService.updateNote(this.note.id, updateDto).subscribe({
+      next: (response) => {
         // If color changed, update it
         if (this.selectedColor() !== this.note.color) {
-          this.noteService.updateColor(this.note.id, { color: this.selectedColor() }).subscribe({
-            next: () => this.close.emit(),
-            error: () => this.close.emit()
+          const colorDto: UpdateNoteColorDto = { color: this.selectedColor() };
+          this.noteService.updateNoteColor(this.note.id, colorDto).subscribe({
+            next: () => {
+              this.isSaving.set(false);
+              this.close.emit();
+            },
+            error: (err: any) => {
+              console.error('Failed to update color:', err);
+              this.isSaving.set(false);
+              this.close.emit();
+            }
           });
         } else {
+          this.isSaving.set(false);
           this.close.emit();
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to update note:', err);
         this.isSaving.set(false);
       }
@@ -92,9 +104,12 @@ export class NoteEditDialogComponent implements OnInit {
 
   togglePin(): void {
     this.noteService.togglePin(this.note.id).subscribe({
-      next: (updatedNote) => {
-        this.note = updatedNote;
-      }
+      next: (response) => {
+        if (response.data) {
+          this.note = response.data;
+        }
+      },
+      error: (err: any) => console.error('Failed to toggle pin:', err)
     });
   }
 
@@ -102,15 +117,17 @@ export class NoteEditDialogComponent implements OnInit {
     this.noteService.toggleArchive(this.note.id).subscribe({
       next: () => {
         this.close.emit();
-      }
+      },
+      error: (err: any) => console.error('Failed to archive:', err)
     });
   }
 
   deleteNote(): void {
-    this.noteService.toggleTrash(this.note.id).subscribe({
+    this.noteService.moveToTrash(this.note.id).subscribe({
       next: () => {
         this.close.emit();
-      }
+      },
+      error: (err: any) => console.error('Failed to delete:', err)
     });
   }
 
@@ -127,11 +144,12 @@ export class NoteEditDialogComponent implements OnInit {
     this.showColorPicker.set(false);
     
     // Save color immediately
-    this.noteService.updateColor(this.note.id, { color }).subscribe({
+    const colorDto: UpdateNoteColorDto = { color };
+    this.noteService.updateNoteColor(this.note.id, colorDto).subscribe({
       next: () => {
         this.note.color = color;
       },
-      error: (err) => console.error('Failed to update color:', err)
+      error: (err: any) => console.error('Failed to update color:', err)
     });
   }
 
@@ -161,11 +179,13 @@ export class NoteEditDialogComponent implements OnInit {
     if (!name.trim()) return;
 
     this.labelService.createLabel({ name: name.trim() }).subscribe({
-      next: (newLabel) => {
-        this.toggleLabel(newLabel, event);
-        this.labelSearchQuery.set('');
+      next: (response) => {
+        if (response.data) {
+          this.toggleLabel(response.data, event);
+          this.labelSearchQuery.set('');
+        }
       },
-      error: (err) => console.error('Failed to create label:', err)
+      error: (err: any) => console.error('Failed to create label:', err)
     });
   }
 
@@ -182,27 +202,29 @@ export class NoteEditDialogComponent implements OnInit {
   toggleLabel(label: Label, event: Event): void {
     event.stopPropagation();
     if (this.isLabelAttached(label.id)) {
-      this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+      this.noteService.removeLabel(this.note.id, label.id).subscribe({
         next: () => {
-          this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+          this.note.labels = this.note.labels?.filter(l => l.id !== label.id) || [];
         },
-        error: (err) => console.error('Failed to remove label:', err)
+        error: (err: any) => console.error('Failed to remove label:', err)
       });
     } else {
-      this.noteService.addLabelToNote(this.note.id, label.id).subscribe({
-        next: (updatedNote) => {
-          this.note.labels = updatedNote.labels;
+      this.noteService.addLabel(this.note.id, label.id).subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.note.labels = response.data.labels || [];
+          }
         },
-        error: (err) => console.error('Failed to add label:', err)
+        error: (err: any) => console.error('Failed to add label:', err)
       });
     }
   }
 
   removeLabel(label: LabelDto, event: Event): void {
     event.stopPropagation();
-    this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+    this.noteService.removeLabel(this.note.id, label.id).subscribe({
       next: () => {
-        this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+        this.note.labels = this.note.labels?.filter(l => l.id !== label.id) || [];
       },
       error: (err) => console.error('Failed to remove label:', err)
     });
@@ -211,9 +233,17 @@ export class NoteEditDialogComponent implements OnInit {
   copyNote(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    this.noteService.copyNote(this.note).subscribe({
+    
+    // ✅ FIX: Create a copy of the note with proper types
+    const copyDto: CreateNoteDto = {
+      title: this.note.title ? `${this.note.title} (Copy)` : undefined,
+      content: this.note.content || undefined,  // ✅ Convert null to undefined
+      color: this.note.color
+    };
+
+    this.noteService.createNote(copyDto).subscribe({
       next: () => this.close.emit(),
-      error: (err) => console.error('Failed to copy note:', err)
+      error: (err: any) => console.error('Failed to copy note:', err)
     });
   }
 

@@ -68,15 +68,16 @@ export class TakeNoteComponent {
       content: content || undefined,
       color: this.selectedColor()
     }).subscribe({
-      next: (note) => {
+      next: (response) => {
         // If pinned, toggle pin on the created note
-        if (this.isPinned()) {
+        const note = response.data;
+        if (note && this.isPinned()) {
           this.noteService.togglePin(note.id).subscribe();
         }
         this.noteCreated.emit();
         this.resetAndClose();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to create note:', err);
         this.isSaving.set(false);
       }

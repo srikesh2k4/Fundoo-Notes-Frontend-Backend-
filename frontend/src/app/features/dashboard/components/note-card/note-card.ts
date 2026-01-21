@@ -62,10 +62,12 @@ export class NoteCardComponent implements OnInit {
     event.stopPropagation();
     this.noteService.togglePin(this.note.id).subscribe({
       next: (updatedNote) => {
-        this.note = updatedNote;
-        this.noteUpdated.emit();
+        if (updatedNote.data) {
+          this.note = updatedNote.data;
+          this.noteUpdated.emit();
+        }
       },
-      error: (err) => console.error('Failed to toggle pin:', err)
+      error: (err: any) => console.error('Failed to toggle pin:', err)
     });
   }
 
@@ -73,10 +75,12 @@ export class NoteCardComponent implements OnInit {
     event.stopPropagation();
     this.noteService.toggleArchive(this.note.id).subscribe({
       next: (updatedNote) => {
-        this.note = updatedNote;
-        this.noteUpdated.emit();
+        if (updatedNote.data) {
+          this.note = updatedNote.data;
+          this.noteUpdated.emit();
+        }
       },
-      error: (err) => console.error('Failed to toggle archive:', err)
+      error: (err: any) => console.error('Failed to toggle archive:', err)
     });
   }
 
@@ -84,28 +88,28 @@ export class NoteCardComponent implements OnInit {
   moveToTrash(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    this.noteService.toggleTrash(this.note.id).subscribe({
+    this.noteService.moveToTrash(this.note.id).subscribe({
       next: () => this.noteUpdated.emit(),
-      error: (err) => console.error('Failed to move to trash:', err)
+      error: (err: any) => console.error('Failed to move to trash:', err)
     });
   }
 
   // Restore note from trash
   restoreNote(event: Event): void {
     event.stopPropagation();
-    this.noteService.restoreFromTrash(this.note.id).subscribe({
+    this.noteService.restoreNote(this.note.id).subscribe({
       next: () => this.noteUpdated.emit(),
-      error: (err) => console.error('Failed to restore note:', err)
+      error: (err: any) => console.error('Failed to restore note:', err)
     });
   }
 
   // Permanently delete note
-  deletePermanently(event: Event): void {
+  permanentlyDelete(event: Event): void {
     event.stopPropagation();
     if (confirm('Delete note forever?')) {
-      this.noteService.deletePermanently(this.note.id).subscribe({
+      this.noteService.permanentlyDelete(this.note.id).subscribe({
         next: () => this.noteUpdated.emit(),
-        error: (err) => console.error('Failed to delete permanently:', err)
+        error: (err: any) => console.error('Failed to delete permanently:', err)
       });
     }
   }
@@ -114,9 +118,9 @@ export class NoteCardComponent implements OnInit {
   deleteNote(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    this.noteService.toggleTrash(this.note.id).subscribe({
+    this.noteService.moveToTrash(this.note.id).subscribe({
       next: () => this.noteUpdated.emit(),
-      error: (err) => console.error('Failed to delete note:', err)
+      error: (err: any) => console.error('Failed to delete note:', err)
     });
   }
 
@@ -124,22 +128,31 @@ export class NoteCardComponent implements OnInit {
   copyNote(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    this.noteService.copyNote(this.note).subscribe({
+    
+    const copyDto: any = {
+      title: this.note.title ? `${this.note.title} (Copy)` : undefined,
+      content: this.note.content || undefined,
+      color: this.note.color
+    };
+
+    this.noteService.createNote(copyDto).subscribe({
       next: () => this.noteUpdated.emit(),
-      error: (err) => console.error('Failed to copy note:', err)
+      error: (err: any) => console.error('Failed to copy note:', err)
     });
   }
 
-  updateColor(color: string, event: Event): void {
+  updateNoteColor(color: string, event: Event): void {
     event.stopPropagation();
     console.log('Updating color to:', color);
-    this.noteService.updateColor(this.note.id, { color }).subscribe({
+    this.noteService.updateNoteColor(this.note.id, { color }).subscribe({
       next: (updatedNote) => {
-        this.note = updatedNote;
+        if (updatedNote.data) {
+          this.note = updatedNote.data;
+        }
         this.showColorPicker.set(false);
         this.noteUpdated.emit();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to update color:', err);
         // Fallback: update locally anyway to allow user to see change, 
         // even if backend is being strict (temporary fix for UX)
@@ -184,10 +197,12 @@ export class NoteCardComponent implements OnInit {
     this.labelService.createLabel({ name: name.trim() }).subscribe({
       next: (newLabel) => {
         // Add to note immediately
-        this.toggleLabel(newLabel, event);
+        if (newLabel.data) {
+          this.toggleLabel(newLabel.data, event);
+        }
         this.labelSearchQuery.set('');
       },
-      error: (err) => console.error('Failed to create label:', err)
+      error: (err: any) => console.error('Failed to create label:', err)
     });
   }
 
@@ -198,32 +213,34 @@ export class NoteCardComponent implements OnInit {
   toggleLabel(label: Label, event: Event): void {
     event.stopPropagation();
     if (this.isLabelAttached(label.id)) {
-      this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+      this.noteService.removeLabel(this.note.id, label.id).subscribe({
         next: () => {
           this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
           this.noteUpdated.emit();
         },
-        error: (err) => console.error('Failed to remove label:', err)
+        error: (err: any) => console.error('Failed to remove label:', err)
       });
     } else {
-      this.noteService.addLabelToNote(this.note.id, label.id).subscribe({
+      this.noteService.addLabel(this.note.id, label.id).subscribe({
         next: (updatedNote) => {
-          this.note = updatedNote;
+          if (updatedNote.data) {
+            this.note = updatedNote.data;
+          }
           this.noteUpdated.emit();
         },
-        error: (err) => console.error('Failed to add label:', err)
+        error: (err: any) => console.error('Failed to add label:', err)
       });
     }
   }
 
   removeLabel(label: LabelDto, event: Event): void {
     event.stopPropagation();
-    this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+    this.noteService.removeLabel(this.note.id, label.id).subscribe({
       next: () => {
         this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
         this.noteUpdated.emit();
       },
-      error: (err) => console.error('Failed to remove label:', err)
+      error: (err: any) => console.error('Failed to remove label:', err)
     });
   }
 

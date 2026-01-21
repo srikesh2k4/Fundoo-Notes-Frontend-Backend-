@@ -1,146 +1,164 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
 
-export interface RegisterRequest {
-  name: string;
+export interface LoginDto {
   email: string;
   password: string;
 }
 
-export interface VerifyOtpRequest {
-  email: string;
-  otp: string;
-}
-
-export interface LoginRequest {
+export interface RegisterDto {
+  name: string;
   email: string;
   password: string;
 }
 
 export interface AuthResponse {
-  userId: number;
-  email: string;
-  name: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
-
-export interface ApiResponse<T = null> {
   success: boolean;
   message: string;
-  data: T;
+  data: {
+    userId: number;
+    email: string;
+    name: string;
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+  };
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private platformId = inject(PLATFORM_ID);
-  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private readonly apiUrl = `${environment.apiUrl}/api/auth`;
+  private readonly TOKEN_KEY = 'access_token';
+  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly USER_KEY = 'user_data';
 
-  private get isBrowser(): boolean {
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    // Initialize authentication state only in browser
+    if (this.isBrowser()) {
+      this.isAuthenticatedSubject.next(this.hasToken());
+    }
+  }
+
+  private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
-  register(data: RegisterRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/register`, data);
+  /**
+   * Register a new user
+   */
+  register(dto: RegisterDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, dto);
   }
 
-  verifyOtp(data: VerifyOtpRequest): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/verify-otp`, data);
+  /**
+   * Verify OTP
+   */
+  verifyOtp(email: string, otp: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/verify-otp`, { email, otp });
   }
 
-  login(data: LoginRequest): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, data).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          this.saveToken(response.data.accessToken);
-          this.saveRefreshToken(response.data.refreshToken);
-          this.saveUser(response.data);
-        }
-      })
-    );
+  /**
+   * Resend OTP
+   */
+  resendOtp(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/resend-otp`, { email });
   }
 
-  logout(): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
-        this.clearStorage();
-      })
-    );
+  /**
+   * Login
+   */
+  login(dto: LoginDto): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, dto)
+      .pipe(
+        tap(response => {
+          if (response.success && response.data) {
+            this.setSession(response.data);
+          }
+        })
+      );
   }
 
-  forgotPassword(email: string): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/forgot-password`, { email });
+  /**
+   * Logout (returns Observable)
+   */
+  logout(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {})
+      .pipe(
+        tap(() => {
+          this.clearStorage();
+          this.router.navigate(['/login']);
+        })
+      );
   }
 
-  resetPassword(email: string, token: string, newPassword: string): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/reset-password`, {
-      email,
-      token,
-      newPassword
-    });
-  }
-
-  resendOtp(email: string): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/resend-otp`, { email });
-  }
-
-  // Token management
-  saveToken(token: string): void {
-    if (this.isBrowser) {
-      localStorage.setItem('token', token);
-    }
-  }
-
-  getToken(): string | null {
-    if (this.isBrowser) {
-      return localStorage.getItem('token');
-    }
-    return null;
-  }
-
-  saveRefreshToken(token: string): void {
-    if (this.isBrowser) {
-      localStorage.setItem('refreshToken', token);
-    }
-  }
-
-  getRefreshToken(): string | null {
-    if (this.isBrowser) {
-      return localStorage.getItem('refreshToken');
-    }
-    return null;
-  }
-
-  saveUser(user: AuthResponse): void {
-    if (this.isBrowser) {
-      localStorage.setItem('user', JSON.stringify(user));
-    }
-  }
-
-  getUser(): AuthResponse | null {
-    if (this.isBrowser) {
-      const user = localStorage.getItem('user');
-      return user ? JSON.parse(user) : null;
-    }
-    return null;
-  }
-
-  clearStorage(): void {
-    if (this.isBrowser) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-    }
-  }
-
+  /**
+   * Check if user is logged in
+   */
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return this.hasToken();
+  }
+
+  /**
+   * Get access token
+   */
+  getToken(): string | null {
+    if (!this.isBrowser()) return null;
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  /**
+   * Set session data
+   */
+  private setSession(authResult: any): void {
+    if (!this.isBrowser()) return;
+    localStorage.setItem(this.TOKEN_KEY, authResult.accessToken);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, authResult.refreshToken);
+    localStorage.setItem(this.USER_KEY, JSON.stringify({
+      userId: authResult.userId,
+      email: authResult.email,
+      name: authResult.name
+    }));
+    this.isAuthenticatedSubject.next(true);
+  }
+
+  /**
+   * Clear storage
+   */
+  clearStorage(): void {
+    if (!this.isBrowser()) return;
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.isAuthenticatedSubject.next(false);
+  }
+
+  /**
+   * Check if token exists
+   */
+  private hasToken(): boolean {
+    if (!this.isBrowser()) return false;
+    return !!localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  /**
+   * Get current user
+   */
+  getCurrentUser(): any {
+    if (!this.isBrowser()) return null;
+    const userData = localStorage.getItem(this.USER_KEY);
+    return userData ? JSON.parse(userData) : null;
   }
 }

@@ -32,7 +32,7 @@ export class MainContentComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     this.setupNotesSubscription();
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 
   ngOnDestroy(): void {
@@ -75,13 +75,13 @@ export class MainContentComponent implements OnInit, OnChanges, OnDestroy {
   onNoteCreated(): void {
     // Notes are automatically updated via the BehaviorSubject subscription
     // Just trigger a refresh to get the latest from server
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 
   onNoteUpdated(): void {
     // Notes are automatically updated via the BehaviorSubject subscription
     // Just trigger a refresh to get the latest from server
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 
   onNoteClick(note: Note): void {
@@ -93,6 +93,6 @@ export class MainContentComponent implements OnInit, OnChanges, OnDestroy {
     this.showEditDialog.set(false);
     this.selectedNote.set(null);
     // Refresh notes after closing the edit dialog to reflect any changes
-    this.noteService.refreshNotes();
+    this.noteService.loadNotes();
   }
 }

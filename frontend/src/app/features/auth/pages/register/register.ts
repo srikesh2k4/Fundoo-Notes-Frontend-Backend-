@@ -177,7 +177,7 @@ onOtpPaste(event: ClipboardEvent): void {
       otp: this.otp.join('')
     };
 
-    this.authService.verifyOtp(otpData).subscribe({
+    this.authService.verifyOtp(this.email, this.otp.join('')).subscribe({
       next: (response) => {
         this.isLoading.set(false);
         if (response.success) {
