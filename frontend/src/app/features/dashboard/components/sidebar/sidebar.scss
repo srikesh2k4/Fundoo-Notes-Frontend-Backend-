@@ -2,16 +2,7 @@
 $sidebar-width-collapsed: 80px;
 $sidebar-width-expanded: 280px;
 
-$color-hover: #feefc3;
-$color-active: #feefc3;
-$color-focus: #1a73e8;
-$color-overlay: rgba(0, 0, 0, 0.6);
-$color-text: #202124;
-$color-text-secondary: #5f6368;
-$color-border: #e0e0e0;
-$color-bg: #fff;
-$color-button-hover: rgba(0, 0, 0, 0.08);
-
+// Use CSS variables for theming
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
@@ -35,7 +26,7 @@ $z-index-overlay: 1000;
 .sidebar {
   width: $sidebar-width-collapsed;
   height: calc(100vh - $header-height);
-  background-color: $color-bg;
+  background-color: var(--bg-primary);
   border: none;
   position: fixed;
   top: $header-height;
@@ -43,7 +34,7 @@ $z-index-overlay: 1000;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  transition: width $transition-medium;
+  transition: width $transition-medium, background-color 0.2s ease;
   z-index: $z-index-sidebar;
 
   &.expanded {
@@ -84,32 +75,40 @@ $z-index-overlay: 1000;
   padding: 0;
   border-radius: $border-radius;
   border: none;
-  color: $color-text;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: background-color $transition-fast;
+  transition: background-color $transition-fast, color 0.2s ease;
   justify-content: center;
   text-decoration: none;
 
   &:hover {
-    background-color: $color-hover;
-
-        border-top-right-radius: $border-radius;
+    background-color: var(--bg-hover);
+    
+    border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   &.active {
-    background-color: $color-active;
+    background-color: var(--color-yellow-bg);
     border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    // No margin or padding overrides, keep alignment consistent
+    
+    .nav-icon svg {
+        fill: var(--text-primary);
+    }
+    
+    .nav-text {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
   }
 
   /* Expanded sidebar */
@@ -128,7 +127,7 @@ $z-index-overlay: 1000;
 
   // Reset button-specific styles that might conflict
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 }
@@ -153,7 +152,7 @@ $z-index-overlay: 1000;
   svg {
     width: 24px;
     height: 24px;
-    fill: $color-text;
+    fill: var(--icon-color);
   }
 
   .sidebar.expanded & {
@@ -168,7 +167,7 @@ $z-index-overlay: 1000;
 // ================= TEXT =================
 .nav-text {
   font-size: 14px;
-  color: $color-text;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   max-width: 0;
@@ -204,13 +203,13 @@ $z-index-overlay: 1000;
 
 .footer-link {
   font-size: 12px;
-  color: $color-text-secondary;
+  color: var(--text-secondary);
   display: none;
   text-decoration: none;
 
   &:hover {
     text-decoration: underline;
-    color: $color-text;
+    color: var(--text-primary);
   }
 }
 
@@ -218,7 +217,7 @@ $z-index-overlay: 1000;
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: $color-overlay;
+  background: rgba(0, 0, 0, 0.6); // Keep for both themes or use a variable if defined
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,7 +231,7 @@ $z-index-overlay: 1000;
 }
 
 .edit-labels-dialog {
-  background: $color-bg;
+  background: var(--bg-primary);
   width: 100%;
   max-width: 360px;
   max-height: 80vh;
@@ -264,7 +263,7 @@ $z-index-overlay: 1000;
     margin: 0;
     font-size: 16px;
     font-weight: 500;
-    color: $color-text;
+    color: var(--text-primary);
     line-height: 1.5;
   }
 }
@@ -288,22 +287,22 @@ $z-index-overlay: 1000;
   padding: $spacing-sm $spacing-lg;
   font-size: 14px;
   font-weight: 500;
-  color: $color-text;
+  color: var(--text-primary);
   cursor: pointer;
   border-radius: 4px;
   transition: background-color $transition-fast;
   font-family: 'Roboto', Arial, sans-serif;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 }
@@ -320,20 +319,20 @@ $z-index-overlay: 1000;
 .label-input {
   flex: 1;
   border: none;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid var(--border-color);
   padding: $spacing-sm 0;
   font-size: 14px;
-  color: $color-text;
+  color: var(--text-primary);
   outline: none;
   font-family: 'Roboto', Arial, sans-serif;
   background: transparent;
 
   &::placeholder {
-    color: $color-text-secondary;
+    color: var(--text-secondary);
   }
 
   &:focus {
-    border-bottom-color: $color-focus;
+    border-bottom-color: var(--color-accent);
   }
 }
 
@@ -351,15 +350,15 @@ $z-index-overlay: 1000;
   svg {
     width: 18px;
     height: 18px;
-    fill: $color-text-secondary;
+    fill: var(--text-secondary);
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   &:disabled {
@@ -382,7 +381,7 @@ $z-index-overlay: 1000;
   transition: background-color $transition-fast;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: var(--bg-hover);
   }
 }
 
@@ -394,7 +393,7 @@ $z-index-overlay: 1000;
   }
 
   svg {
-    fill: $color-text-secondary;
+    fill: var(--text-secondary);
   }
 }
 
@@ -407,14 +406,14 @@ $z-index-overlay: 1000;
   svg {
     width: 20px;
     height: 20px;
-    fill: $color-text-secondary;
+    fill: var(--text-secondary);
   }
 }
 
 .label-name {
   flex: 1;
   font-size: 14px;
-  color: $color-text;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -423,10 +422,10 @@ $z-index-overlay: 1000;
 .label-edit-input {
   flex: 1;
   border: none;
-  border-bottom: 1px solid $color-focus;
+  border-bottom: 1px solid var(--color-accent);
   padding: 4px 0;
   font-size: 14px;
-  color: $color-text;
+  color: var(--text-primary);
   outline: none;
   font-family: 'Roboto', Arial, sans-serif;
   background: transparent;
@@ -455,7 +454,7 @@ $z-index-overlay: 1000;
 
 .check-btn {
   svg {
-    fill: $color-text;
+    fill: var(--text-primary);
   }
 }
 

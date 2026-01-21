@@ -4,11 +4,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--bg-primary); // Ensure background follows theme
 }
 .loader {
   width: 40px;
   aspect-ratio: 1;
-  color: #f03355;
+  color: var(--color-accent); // Use theme accent color
   position: relative;
   background: radial-gradient(10px,currentColor 94%,#0000);
 }

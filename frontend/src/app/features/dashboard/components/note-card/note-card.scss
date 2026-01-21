@@ -7,22 +7,16 @@ $border-radius-full: 50%;
 $transition-fast: 0.2s ease;
 $transition-transform: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
-$shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 2px 0 rgba(60, 64, 67, 0.15);
-$shadow-elevated: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+// Use CSS Shadow variables
+$shadow: var(--shadow-sm);
+$shadow-elevated: var(--shadow-md);
 
 $z-index-pin: 1;
 $z-index-dropdown: 100;
-$color-text: #202124;
-$color-text-secondary: #5f6368;
-$color-overlay: rgba(0, 0, 0, 0.08);
-$color-focus: #1a73e8;
-$color-border: #e0e0e0;
-$color-bg: #fff;
-$color-hover: #f1f3f4;
 
 // Note Card Base
 .note-card {
-  background-color: var(--bg-card);
+  background-color: var(--note-default);
   border: 1px solid var(--border-color);
   border-radius: $border-radius;
   padding: 12px 16px;
@@ -52,7 +46,7 @@ $color-hover: #f1f3f4;
   }
 
   &:focus-visible {
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 }
@@ -75,11 +69,11 @@ $color-hover: #f1f3f4;
   justify-content: center;
 
   &:hover {
-    background-color: rgba(95, 99, 104, 0.16);
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--bg-active);
   }
 
   &.pinned {
@@ -88,14 +82,14 @@ $color-hover: #f1f3f4;
 
   &:focus-visible {
     opacity: 1;
-    outline: 2px solid #1a73e8;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   svg {
     width: 24px;
     height: 24px;
-    fill: var(--text-primary);
+    fill: var(--text-secondary);
     transition: fill $transition-fast;
   }
 }
@@ -138,11 +132,11 @@ $color-hover: #f1f3f4;
 }
 
 .label-chip {
-  background-color: $color-overlay;
+  background-color: var(--bg-hover);
   border-radius: $border-radius-pill;
   padding: 4px 12px;
   font-size: 11px;
-  color: $color-text;
+  color: var(--text-primary);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -150,7 +144,7 @@ $color-hover: #f1f3f4;
   max-width: 100%;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--bg-active);
   }
 
   .label-text {
@@ -178,14 +172,14 @@ $color-hover: #f1f3f4;
 
     &:focus-visible {
       display: flex;
-      outline: 2px solid $color-focus;
+      outline: 2px solid var(--color-accent);
       outline-offset: 1px;
     }
 
     svg {
       width: 12px;
       height: 12px;
-      fill: $color-text-secondary;
+      fill: var(--text-secondary);
     }
   }
 
@@ -223,28 +217,29 @@ $color-hover: #f1f3f4;
   position: relative;
 
   &:hover {
-    background-color: $color-overlay;
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--bg-active);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   svg {
     width: 18px;
     height: 18px;
-    fill: $color-text;
+    fill: var(--text-secondary);
     opacity: 0.71;
     transition: opacity $transition-fast;
   }
 
   &:hover svg {
     opacity: 1;
+    fill: var(--text-primary);
   }
 }
 
@@ -262,7 +257,7 @@ $color-hover: #f1f3f4;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: $border-radius;
-  box-shadow: $shadow-elevated;
+  box-shadow: var(--shadow-md);
   padding: 8px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -318,12 +313,12 @@ $color-hover: #f1f3f4;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
   &.selected {
-    border-color: $color-focus;
+    border-color: var(--color-accent);
 
     &::after {
       content: '';
@@ -331,13 +326,13 @@ $color-hover: #f1f3f4;
       width: 12px;
       height: 12px;
       border-radius: $border-radius-full;
-      background-color: $color-focus;
+      background-color: var(--color-accent);
     }
   }
 
   &:first-child {
-    border: 2px solid $color-border;
-    background-color: $color-bg;
+    border: 2px solid var(--border-color);
+    background-color: var(--note-default);
 
     &:hover {
       border-color: rgba(0, 0, 0, 0.3);
@@ -347,7 +342,7 @@ $color-hover: #f1f3f4;
   svg {
     width: 16px;
     height: 16px;
-    fill: $color-text;
+    fill: var(--text-primary);
   }
 }
 
@@ -364,7 +359,7 @@ $color-hover: #f1f3f4;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  box-shadow: var(--shadow-md);
   padding: 8px 0;
   min-width: 168px;
   z-index: 1001;
@@ -389,15 +384,15 @@ $color-hover: #f1f3f4;
   white-space: nowrap;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: -2px;
   }
 
@@ -414,7 +409,7 @@ $color-hover: #f1f3f4;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   min-width: 220px;
   max-width: 300px;
   z-index: 1002;
@@ -495,23 +490,23 @@ $color-hover: #f1f3f4;
   line-height: 1.5;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   input[type="checkbox"] {
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: #1a73e8;
+    accent-color: var(--color-accent);
     flex-shrink: 0;
     margin: 0;
 
     &:focus-visible {
-      outline: 2px solid #1a73e8;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
@@ -552,50 +547,50 @@ $color-hover: #f1f3f4;
   gap: 8px;
 }
 
-// Background colors for notes
+// Background colors for notes using Theme Variables
 .note-card {
   &[data-color="default"] {
-    background-color: $color-bg;
+    background-color: var(--note-default);
   }
 
   &[data-color="red"] {
-    background-color: #f28b82;
+    background-color: var(--note-coral);
   }
 
   &[data-color="orange"] {
-    background-color: #fbbc04;
+    background-color: var(--note-peach);
   }
 
   &[data-color="yellow"] {
-    background-color: #fff475;
+    background-color: var(--note-sand);
   }
 
   &[data-color="green"] {
-    background-color: #ccff90;
+    background-color: var(--note-mint);
   }
 
   &[data-color="teal"] {
-    background-color: #a7ffeb;
+    background-color: var(--note-sage);
   }
 
   &[data-color="blue"] {
-    background-color: #cbf0f8;
+    background-color: var(--note-fog);
   }
 
   &[data-color="purple"] {
-    background-color: #d7aefb;
+    background-color: var(--note-dusk);
   }
 
   &[data-color="pink"] {
-    background-color: #fdcfe8;
+    background-color: var(--note-blossom);
   }
 
   &[data-color="brown"] {
-    background-color: #e6c9a8;
+    background-color: var(--note-clay);
   }
 
   &[data-color="gray"] {
-    background-color: #e8eaed;
+    background-color: var(--note-chalk);
   }
 }
 

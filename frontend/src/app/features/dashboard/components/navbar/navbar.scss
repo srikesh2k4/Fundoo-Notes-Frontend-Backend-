@@ -643,3 +643,39 @@ input:focus-visible {
     display: none;
   }
 }
+
+/* ================================
+   Dark Mode – Search Bar Fix
+   ================================ */
+@media (prefers-color-scheme: dark) {
+
+  .search-form {
+    background-color: var(--bg-secondary);
+    box-shadow: none;
+  }
+
+  .search-form:focus-within,
+  .search-form.active {
+    background-color: var(--bg-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .search-input {
+    color: var(--text-primary);
+  }
+
+  .search-input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .search-icon svg,
+  .search-back-btn svg,
+  .search-clear-btn svg {
+    fill: var(--icon-color);
+  }
+
+  .search-back-btn:hover,
+  .search-clear-btn:hover {
+    background-color: var(--bg-hover);
+  }
+}

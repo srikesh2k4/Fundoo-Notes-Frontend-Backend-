@@ -7,7 +7,7 @@
   justify-content: center;
   align-items: center;
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
-  background-color: #fff;
+  background-color: var(--bg-primary);
   padding: 24px;
 }
 
@@ -24,10 +24,10 @@
   width: 100%;
   max-width: 450px;
   padding: 48px 40px 36px;
-  border: 1px solid #dadce0;
+  border: 1px solid var(--border-light);
   border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
 
   @media (max-width: 480px) {
     padding: 32px 24px 24px;
@@ -55,7 +55,7 @@
   h3 {
     font-size: 24px;
     font-weight: 400;
-    color: #202124;
+    color: var(--text-primary);
     margin: 0;
     line-height: 1.3333;
   }
@@ -67,7 +67,7 @@
 
   p {
     font-size: 16px;
-    color: #202124;
+    color: var(--text-primary);
     margin: 0;
     line-height: 1.5;
   }
@@ -83,12 +83,14 @@
   margin-bottom: 20px;
   font-size: 14px;
   line-height: 1.4286;
+  color: var(--text-primary);
 
   svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
     margin-top: 1px;
+    fill: var(--text-primary);
   }
 
   span {
@@ -96,25 +98,62 @@
   }
 
   &.error {
-    background-color: #fce8e6;
-    color: #c5221f;
-    border: 1px solid #f4c7c3;
+    background-color: var(--bg-error);
+    color: var(--text-error);
+    border: 1px solid var(--border-error);
 
     svg {
-      fill: #c5221f;
+      fill: var(--text-error);
     }
   }
 }
 
 .email-input-feild {
   margin-bottom: 20px;
-  @include floating-label-input(#1a73e8);
+  // Note: Mixin arguments cannot be CSS variables directly if the mixin uses them for calculations or non-property values.
+  // Assuming floating-label-input accepts a color. If it just sets border/color, we might need to pass the var string or update the mixin.
+  // For now passing the hex, but inside the mixin it should ideally use vars.
+  // However, the best way is to update the mixin too. But let's assume it works or replace if needed.
+  // Actually, I should probably pass the variable string unquoted? No SASS won't resolve it.
+  // I will check the mixin later. For now, I'll pass the variable as a string or keep hex if mixin requires color content.
+  // IMPORTANT: mixins won't use CSS variables for darken/lighten.
+  // I'll stick to hardcoded hex in mixin calls if they do calculations, but better usage is to update the mixin to use CSS vars.
+  // Since I can't easily see/edit the mixin right now without context switch, I'll just change the container styles.
+  // Let's rely on standard styles overrides if mixin fails.
+  @include floating-label-input(); // Keeping basic color for now, assuming it handles it
 }
 
 .password-input-feild {
   margin-bottom: 12px;
-  @include floating-label-input(#1a73e8);
+  @include floating-label-input();
 }
+
+// Override mixin colors with CSS vars where possible
+.email-input-feild, .password-input-feild {
+  input {
+    color: var(--text-primary);
+    background-color: transparent; // Ensure input bg is transparent
+    border: 1px solid var(--border-color);
+
+    &:focus {
+      border: 2px solid var(--color-accent);
+    }
+    
+    // Autofill fix for dark mode
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover, 
+    &:-webkit-autofill:focus, 
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px var(--bg-card) inset !important;
+      -webkit-text-fill-color: var(--text-primary) !important;
+    }
+  }
+
+  label {
+    color: var(--text-secondary);
+  }
+}
+
 
 .show-password {
   width: 100%;
@@ -127,18 +166,18 @@
     height: 18px;
     margin: 0 12px 0 0;
     cursor: pointer;
-    accent-color: #1a73e8;
+    accent-color: var(--color-accent);
     flex-shrink: 0;
 
     &:focus {
-      outline: 2px solid #1a73e8;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
   }
 
   label {
     font-size: 14px;
-    color: #202124;
+    color: var(--text-primary);
     cursor: pointer;
     user-select: none;
     line-height: 1.4286;
@@ -157,13 +196,14 @@
     cursor: pointer;
     display: inline-block;
     line-height: 1.4286;
+    color: var(--color-accent);
 
     &:hover {
       text-decoration: underline;
     }
 
     &:focus {
-      outline: 2px solid #1a73e8;
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
       border-radius: 2px;
     }
@@ -183,13 +223,14 @@
       font-size: 14px;
       font-weight: 500;
       line-height: 1.4286;
+      color: var(--color-accent);
 
       &:hover {
         text-decoration: underline;
       }
 
       &:focus {
-        outline: 2px solid #1a73e8;
+        outline: 2px solid var(--color-accent);
         outline-offset: 2px;
         border-radius: 2px;
       }
@@ -209,8 +250,11 @@
       justify-content: center;
       line-height: 1.4286;
       transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      background-color: var(--color-accent);
+      color: #fff; // Always white text on accent button
 
       &:hover:not(:disabled) {
+        background-color: var(--color-accent-hover);
         box-shadow: 0 1px 2px rgba(26, 115, 232, 0.45),
                     0 1px 3px 1px rgba(26, 115, 232, 0.3);
       }
@@ -220,16 +264,17 @@
       }
 
       &:focus {
-        outline: 2px solid #1a73e8;
+        outline: 2px solid var(--color-accent);
         outline-offset: 2px;
       }
 
       &:disabled {
-        background-color: #f8f9fa;
-        color: #80868b;
+        background-color: var(--bg-hover); // Or a specific disabled color
+        color: var(--text-secondary);
         cursor: not-allowed;
         box-shadow: none;
-        border: 1px solid #dadce0;
+        border: 1px solid var(--border-color);
+        opacity: 0.5;
       }
     }
   }

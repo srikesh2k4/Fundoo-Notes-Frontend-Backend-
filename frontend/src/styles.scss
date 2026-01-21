@@ -50,6 +50,17 @@
   // Icon colors
   --icon-color: #5f6368;
   --icon-hover: #202124;
+
+  // Status colors
+  --bg-error: #fce8e6;
+  --text-error: #c5221f;
+  --border-error: #f4c7c3;
+  --bg-success: #e6f4ea;
+  --text-success: #137333;
+  --border-success: #c6e1c6;
+
+  // Overlay
+  --bg-overlay: rgba(0, 0, 0, 0.6);
 }
 
 // Theme Variables - Dark Mode
@@ -99,6 +110,17 @@
   // Icon colors
   --icon-color: #9aa0a6;
   --icon-hover: #e8eaed;
+
+  // Status colors
+  --bg-error: #5c1b1b; // darker red
+  --text-error: #f28b82; // lighter red text
+  --border-error: #8c1d18;
+  --bg-success: #0f5132; // darker green
+  --text-success: #81c995; // lighter green text
+  --border-success: #34a853;
+
+  // Overlay
+  --bg-overlay: rgba(0, 0, 0, 0.7);
 }
 
 // CSS Reset & Box Sizing

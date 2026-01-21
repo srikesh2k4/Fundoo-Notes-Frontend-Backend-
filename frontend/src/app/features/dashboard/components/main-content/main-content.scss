@@ -5,9 +5,10 @@ $sidebar-collapsed: 80px;
 $sidebar-expanded: 280px;
 $header-height: 64px;
 
-$color-text-secondary: #5f6368;
-$color-border: #e0e0e0;
-$color-accent: #1a73e8;
+// Use CSS variables
+$color-text-secondary: var(--text-secondary);
+$color-border: var(--border-color);
+$color-accent: var(--color-accent);
 
 // ==============================
 // Main Content Area
@@ -66,7 +67,7 @@ $color-accent: #1a73e8;
 
   .search-results-text {
     font-size: 14px;
-    color: $color-text-secondary;
+    color: var(--text-secondary);
     font-weight: 500;
   }
 }
@@ -85,8 +86,8 @@ $color-accent: #1a73e8;
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid $color-border;
-    border-top-color: $color-accent;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--color-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 16px;
@@ -94,7 +95,7 @@ $color-accent: #1a73e8;
 
   p {
     font-size: 14px;
-    color: $color-text-secondary;
+    color: var(--text-secondary);
     margin: 0;
   }
 }

@@ -1,12 +1,4 @@
 // Variables
-$color-white: #fff;
-$color-text: #202124;
-$color-text-secondary: #5f6368;
-$color-border: #e0e0e0;
-$color-overlay: rgba(0, 0, 0, 0.6);
-$color-hover: rgba(0, 0, 0, 0.04);
-$color-focus: #1a73e8;
-
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
@@ -27,7 +19,7 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
   left: 0;
   right: 0;
   bottom: 0;
-  background: $color-overlay;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +40,7 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
 
 // Dialog Container
 .reminder-dialog {
-  background: $color-white;
+  background: var(--bg-card);
   border-radius: $border-radius;
   width: 100%;
   max-width: 320px;
@@ -72,13 +64,13 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
 // Dialog Header
 .dialog-header {
   padding: $spacing-lg $spacing-xl $spacing-md;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid var(--border-color);
 
   h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 500;
-    color: $color-text;
+    color: var(--text-primary);
     font-family: 'Roboto', Arial, sans-serif;
   }
 }
@@ -102,7 +94,7 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  color: $color-text;
+  color: var(--text-primary);
   transition: background-color $transition-fast;
   display: flex;
   align-items: center;
@@ -112,24 +104,24 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
   position: relative;
 
   &:hover {
-    background-color: $color-hover;
+    background-color: var(--bg-hover);
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-active);
   }
 
   &:focus-visible {
-    outline: 2px solid $color-focus;
+    outline: 2px solid var(--color-accent);
     outline-offset: -2px;
   }
 
   &.selected {
-    background-color: rgba(26, 115, 232, 0.08);
-    color: $color-focus;
+    background-color: var(--bg-active);
+    color: var(--color-accent);
 
     .option-icon {
-      fill: $color-focus;
+      fill: var(--color-accent);
     }
   }
 }
@@ -137,7 +129,7 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
 .option-icon {
   width: 20px;
   height: 20px;
-  fill: $color-text-secondary;
+  fill: var(--text-secondary);
   flex-shrink: 0;
   transition: fill $transition-fast;
 }
@@ -149,6 +141,6 @@ $shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
 .check-icon {
   width: 20px;
   height: 20px;
-  fill: $color-focus;
+  fill: var(--color-accent);
   flex-shrink: 0;
 }
