@@ -2,29 +2,43 @@ import { Component, Input, Output, EventEmitter, signal, inject, OnInit } from '
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NoteService } from '../../../../core/services/note.service';
-import { Note } from '../../../../core/models/note.model';
+import { LabelService } from '../../../../core/services/label.service';
+import { Note, LabelDto } from '../../../../core/models/note.model';
+import { Label } from '../../../../core/models/label.model';
 import { NOTE_COLORS } from '../note-card/note-card';
+import { CollaboratorDialogComponent } from '../collaborator-dialog/collaborator-dialog';
+import { ReminderDialogComponent } from '../reminder-dialog/reminder-dialog';
 
 @Component({
   selector: 'app-note-edit-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    CollaboratorDialogComponent,
+    ReminderDialogComponent
+  ],
   templateUrl: './note-edit-dialog.html',
   styleUrls: ['./note-edit-dialog.scss']
 })
 export class NoteEditDialogComponent implements OnInit {
   private noteService = inject(NoteService);
+  private labelService = inject(LabelService);
 
   @Input() note!: Note;
   @Output() close = new EventEmitter<void>();
 
   editTitle = '';
   editContent = '';
-  selectedColor = signal('#ffffff');
+  selectedColor = signal('#FFFFFF');
+  labelSearchQuery = signal('');
   showColorPicker = signal(false);
   showMoreMenu = signal(false);
   showLabelPicker = signal(false);
+  showCollaboratorDialog = signal(false);
+  showReminderDialog = signal(false);
   isSaving = signal(false);
+  allLabels = signal<Label[]>([]);
 
   colors = NOTE_COLORS;
 
@@ -32,8 +46,14 @@ export class NoteEditDialogComponent implements OnInit {
     if (this.note) {
       this.editTitle = this.note.title || '';
       this.editContent = this.note.content || '';
-      this.selectedColor.set(this.note.color || '#ffffff');
+      this.selectedColor.set(this.note.color || '#FFFFFF');
     }
+    
+    // Load all labels
+    this.labelService.labels$.subscribe(labels => {
+      this.allLabels.set(labels);
+    });
+    this.labelService.refreshLabels();
   }
 
   saveAndClose(): void {
@@ -99,6 +119,14 @@ export class NoteEditDialogComponent implements OnInit {
     event.stopPropagation();
     this.selectedColor.set(color);
     this.showColorPicker.set(false);
+    
+    // Save color immediately
+    this.noteService.updateColor(this.note.id, { color }).subscribe({
+      next: () => {
+        this.note.color = color;
+      },
+      error: (err) => console.error('Failed to update color:', err)
+    });
   }
 
   toggleMoreMenu(event: Event): void {
@@ -113,12 +141,80 @@ export class NoteEditDialogComponent implements OnInit {
     this.showLabelPicker.update(v => !v);
     this.showColorPicker.set(false);
     this.showMoreMenu.set(false);
+    this.labelSearchQuery.set(''); // Reset search
+  }
+
+  get filteredLabels(): Label[] {
+    const query = this.labelSearchQuery().toLowerCase().trim();
+    if (!query) return this.allLabels();
+    return this.allLabels().filter(l => l.name.toLowerCase().includes(query));
+  }
+
+  createLabel(name: string, event: Event): void {
+    event.stopPropagation();
+    if (!name.trim()) return;
+
+    this.labelService.createLabel({ name: name.trim() }).subscribe({
+      next: (newLabel) => {
+        // Add to note immediately
+        this.toggleLabel(newLabel, event);
+        this.labelSearchQuery.set('');
+      },
+      error: (err) => console.error('Failed to create label:', err)
+    });
   }
 
   closeMenus(): void {
     this.showColorPicker.set(false);
     this.showMoreMenu.set(false);
     this.showLabelPicker.set(false);
+    this.showCollaboratorDialog.set(false);
+    this.showReminderDialog.set(false);
+  }
+
+  isLabelAttached(labelId: number): boolean {
+    return this.note.labels?.some(l => l.id === labelId) ?? false;
+  }
+
+  toggleLabel(label: Label, event: Event): void {
+    event.stopPropagation();
+    if (this.isLabelAttached(label.id)) {
+      this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+        next: () => {
+          this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+        },
+        error: (err) => console.error('Failed to remove label:', err)
+      });
+    } else {
+      this.noteService.addLabelToNote(this.note.id, label.id).subscribe({
+        next: (updatedNote) => {
+          this.note.labels = updatedNote.labels;
+        },
+        error: (err) => console.error('Failed to add label:', err)
+      });
+    }
+  }
+
+  removeLabel(label: LabelDto, event: Event): void {
+    event.stopPropagation();
+    this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
+      next: () => {
+        this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+      },
+      error: (err) => console.error('Failed to remove label:', err)
+    });
+  }
+
+  openCollaboratorDialog(event: Event): void {
+    event.stopPropagation();
+    this.closeMenus();
+    this.showCollaboratorDialog.set(true);
+  }
+
+  openReminderDialog(event: Event): void {
+    event.stopPropagation();
+    this.closeMenus();
+    this.showReminderDialog.set(true);
   }
 
   copyNote(event: Event): void {

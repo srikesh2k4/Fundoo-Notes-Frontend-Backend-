@@ -426,12 +426,53 @@ $color-hover: #f1f3f4;
 }
 
 .label-picker-header {
-  padding: 12px 16px;
+  padding: 0;
   font-size: 13px;
   font-weight: 500;
   color: $color-text;
   border-bottom: 1px solid $color-border;
   line-height: 1.5;
+}
+
+.label-search-input {
+  width: 100%;
+  border: none;
+  padding: 12px 16px;
+  font-size: 13px;
+  outline: none;
+  background: transparent;
+  color: $color-text;
+  font-family: 'Roboto', Arial, sans-serif;
+
+  &::placeholder {
+    color: #5f6368;
+  }
+}
+
+.create-option {
+  border-top: 1px solid $color-border;
+  font-weight: 500;
+  color: $color-text;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #feefc3;
+  }
+  
+  .plus-icon {
+    width: 18px;
+    height: 18px;
+    fill: #5f6368;
+  }
+
+  b {
+    font-weight: 600;
+    margin-left: 2px;
+  }
 }
 
 .label-picker-list {

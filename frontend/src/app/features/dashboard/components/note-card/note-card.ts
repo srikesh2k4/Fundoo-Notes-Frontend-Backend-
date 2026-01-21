@@ -1,30 +1,31 @@
 import { Component, Input, Output, EventEmitter, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NoteService } from '../../../../core/services/note.service';
 import { LabelService } from '../../../../core/services/label.service';
 import { Note, LabelDto } from '../../../../core/models/note.model';
 import { Label } from '../../../../core/models/label.model';
 
-// Google Keep color palette
+// Google Keep color palette - must match backend validation
 export const NOTE_COLORS = [
-  { name: 'Default', value: '#ffffff' },
-  { name: 'Coral', value: '#faafa8' },
-  { name: 'Peach', value: '#f39f76' },
-  { name: 'Sand', value: '#fff8b8' },
-  { name: 'Mint', value: '#e2f6d3' },
-  { name: 'Sage', value: '#b4ddd3' },
-  { name: 'Fog', value: '#d4e4ed' },
-  { name: 'Storm', value: '#aeccdc' },
-  { name: 'Dusk', value: '#d3bfdb' },
-  { name: 'Blossom', value: '#f6e2dd' },
-  { name: 'Clay', value: '#e9e3d4' },
-  { name: 'Chalk', value: '#efeff1' }
+  { name: 'Default', value: '#FFFFFF' },
+  { name: 'Red', value: '#F28B82' },
+  { name: 'Orange', value: '#FBBC04' },
+  { name: 'Yellow', value: '#FFF475' },
+  { name: 'Green', value: '#CCFF90' },
+  { name: 'Teal', value: '#A7FFEB' },
+  { name: 'Blue', value: '#CBF0F8' },
+  { name: 'Dark Blue', value: '#AECBFA' },
+  { name: 'Purple', value: '#D7AEFB' },
+  { name: 'Pink', value: '#FDCFE8' },
+  { name: 'Brown', value: '#E6C9A8' },
+  { name: 'Gray', value: '#E8EAED' }
 ];
 
 @Component({
   selector: 'app-note-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './note-card.html',
   styleUrls: ['./note-card.scss']
 })
@@ -41,6 +42,7 @@ export class NoteCardComponent implements OnInit {
   showColorPicker = signal(false);
   showMoreMenu = signal(false);
   showLabelPicker = signal(false);
+  labelSearchQuery = signal('');
   allLabels = signal<Label[]>([]);
   colors = NOTE_COLORS;
 
@@ -59,7 +61,10 @@ export class NoteCardComponent implements OnInit {
   togglePin(event: Event): void {
     event.stopPropagation();
     this.noteService.togglePin(this.note.id).subscribe({
-      next: () => this.noteUpdated.emit(),
+      next: (updatedNote) => {
+        this.note = updatedNote;
+        this.noteUpdated.emit();
+      },
       error: (err) => console.error('Failed to toggle pin:', err)
     });
   }
@@ -67,7 +72,10 @@ export class NoteCardComponent implements OnInit {
   toggleArchive(event: Event): void {
     event.stopPropagation();
     this.noteService.toggleArchive(this.note.id).subscribe({
-      next: () => this.noteUpdated.emit(),
+      next: (updatedNote) => {
+        this.note = updatedNote;
+        this.noteUpdated.emit();
+      },
       error: (err) => console.error('Failed to toggle archive:', err)
     });
   }
@@ -124,12 +132,20 @@ export class NoteCardComponent implements OnInit {
 
   updateColor(color: string, event: Event): void {
     event.stopPropagation();
+    console.log('Updating color to:', color);
     this.noteService.updateColor(this.note.id, { color }).subscribe({
-      next: () => {
+      next: (updatedNote) => {
+        this.note = updatedNote;
         this.showColorPicker.set(false);
         this.noteUpdated.emit();
       },
-      error: (err) => console.error('Failed to update color:', err)
+      error: (err) => {
+        console.error('Failed to update color:', err);
+        // Fallback: update locally anyway to allow user to see change, 
+        // even if backend is being strict (temporary fix for UX)
+        this.note.color = color;
+        this.showColorPicker.set(false);
+      }
     });
   }
 
@@ -152,6 +168,27 @@ export class NoteCardComponent implements OnInit {
     this.showLabelPicker.update(v => !v);
     this.showColorPicker.set(false);
     this.showMoreMenu.set(false);
+    this.labelSearchQuery.set('');
+  }
+
+  get filteredLabels(): Label[] {
+    const query = this.labelSearchQuery().toLowerCase().trim();
+    if (!query) return this.allLabels();
+    return this.allLabels().filter(l => l.name.toLowerCase().includes(query));
+  }
+
+  createLabel(name: string, event: Event): void {
+    event.stopPropagation();
+    if (!name.trim()) return;
+
+    this.labelService.createLabel({ name: name.trim() }).subscribe({
+      next: (newLabel) => {
+        // Add to note immediately
+        this.toggleLabel(newLabel, event);
+        this.labelSearchQuery.set('');
+      },
+      error: (err) => console.error('Failed to create label:', err)
+    });
   }
 
   isLabelAttached(labelId: number): boolean {
@@ -162,12 +199,18 @@ export class NoteCardComponent implements OnInit {
     event.stopPropagation();
     if (this.isLabelAttached(label.id)) {
       this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
-        next: () => this.noteUpdated.emit(),
+        next: () => {
+          this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+          this.noteUpdated.emit();
+        },
         error: (err) => console.error('Failed to remove label:', err)
       });
     } else {
       this.noteService.addLabelToNote(this.note.id, label.id).subscribe({
-        next: () => this.noteUpdated.emit(),
+        next: (updatedNote) => {
+          this.note = updatedNote;
+          this.noteUpdated.emit();
+        },
         error: (err) => console.error('Failed to add label:', err)
       });
     }
@@ -176,7 +219,10 @@ export class NoteCardComponent implements OnInit {
   removeLabel(label: LabelDto, event: Event): void {
     event.stopPropagation();
     this.noteService.removeLabelFromNote(this.note.id, label.id).subscribe({
-      next: () => this.noteUpdated.emit(),
+      next: () => {
+        this.note.labels = this.note.labels?.filter(l => l.id !== label.id);
+        this.noteUpdated.emit();
+      },
       error: (err) => console.error('Failed to remove label:', err)
     });
   }

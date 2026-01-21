@@ -157,13 +157,33 @@
 
         <!-- Label Picker Dropdown -->
         <div class="label-picker" *ngIf="showLabelPicker()">
-          <div class="label-picker-header">Label note</div>
+          <div class="label-picker-header">
+            <input 
+              type="text" 
+              placeholder="Enter label name" 
+              [ngModel]="labelSearchQuery()"
+              (ngModelChange)="labelSearchQuery.set($event)"
+              (click)="$event.stopPropagation()"
+              class="label-search-input"
+              autoFocus>
+          </div>
           <div class="label-picker-list">
-            <div class="label-picker-item" *ngFor="let label of allLabels()" (click)="toggleLabel(label, $event)">
-              <input type="checkbox" [checked]="isLabelAttached(label.id)" (click)="$event.stopPropagation()">
+            <!-- Filtered Labels -->
+            <div class="label-picker-item" *ngFor="let label of filteredLabels" (click)="toggleLabel(label, $event)">
+              <input type="checkbox" [checked]="isLabelAttached(label.id)" (click)="$event.stopPropagation(); toggleLabel(label, $event)">
               <span>{{ label.name }}</span>
             </div>
-            <div class="label-picker-empty" *ngIf="allLabels().length === 0">
+            
+            <!-- Create New Filter Option -->
+            <div class="label-picker-item create-option" 
+                 *ngIf="labelSearchQuery().trim() && filteredLabels.length === 0"
+                 (click)="createLabel(labelSearchQuery(), $event)">
+              <svg viewBox="0 0 24 24" class="plus-icon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
+              <span>Create "<b>{{ labelSearchQuery() }}</b>"</span>
+            </div>
+
+            <!-- Empty State (No labels and no query) -->
+            <div class="label-picker-empty" *ngIf="allLabels().length === 0 && !labelSearchQuery()">
               No labels yet
             </div>
           </div>

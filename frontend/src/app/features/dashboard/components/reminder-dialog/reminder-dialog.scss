@@ -1,0 +1,154 @@
+// Variables
+$color-white: #fff;
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-overlay: rgba(0, 0, 0, 0.6);
+$color-hover: rgba(0, 0, 0, 0.04);
+$color-focus: #1a73e8;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+$border-radius: 8px;
+$border-radius-sm: 4px;
+
+$transition-fast: 0.2s ease;
+
+$shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+// Dialog Overlay
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: $spacing-xl;
+  animation: overlayFadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dialog Container
+.reminder-dialog {
+  background: $color-white;
+  border-radius: $border-radius;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: $shadow-dialog;
+  display: flex;
+  flex-direction: column;
+  animation: dialogSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Dialog Header
+.dialog-header {
+  padding: $spacing-lg $spacing-xl $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: $color-text;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+}
+
+// Dialog Content
+.dialog-content {
+  padding: $spacing-sm 0;
+}
+
+// Reminder Options
+.reminder-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.reminder-option {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: $spacing-md $spacing-xl;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: $color-text;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+  position: relative;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: -2px;
+  }
+
+  &.selected {
+    background-color: rgba(26, 115, 232, 0.08);
+    color: $color-focus;
+
+    .option-icon {
+      fill: $color-focus;
+    }
+  }
+}
+
+.option-icon {
+  width: 20px;
+  height: 20px;
+  fill: $color-text-secondary;
+  flex-shrink: 0;
+  transition: fill $transition-fast;
+}
+
+.reminder-option span {
+  flex: 1;
+}
+
+.check-icon {
+  width: 20px;
+  height: 20px;
+  fill: $color-focus;
+  flex-shrink: 0;
+}

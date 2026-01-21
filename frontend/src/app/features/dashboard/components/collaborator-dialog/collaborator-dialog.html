@@ -1,0 +1,52 @@
+<div class="dialog-overlay" (click)="onOverlayClick($event)">
+  <div class="collaborator-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Collaborators</h2>
+    </div>
+
+    <div class="dialog-content">
+      <div class="owner-section">
+        <div class="owner-avatar">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+          </svg>
+        </div>
+        <div class="owner-info">
+          <div class="owner-name">You (Owner)</div>
+        </div>
+      </div>
+
+      <div class="add-collaborator-section">
+        <input
+          type="email"
+          [(ngModel)]="collaboratorEmail"
+          placeholder="Person or email to share with"
+          class="collaborator-input"
+          (keyup.enter)="addCollaborator()">
+      </div>
+
+      <div class="collaborators-list" *ngIf="collaborators().length > 0">
+        <div class="collaborator-item" *ngFor="let email of collaborators()">
+          <div class="collaborator-avatar">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+            </svg>
+          </div>
+          <div class="collaborator-info">
+            <div class="collaborator-email">{{ email }}</div>
+          </div>
+          <button class="remove-btn" (click)="removeCollaborator(email)" aria-label="Remove collaborator">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <button class="cancel-btn" (click)="close.emit()">Cancel</button>
+      <button class="save-btn" (click)="saveAndClose()">Save</button>
+    </div>
+  </div>
+</div>

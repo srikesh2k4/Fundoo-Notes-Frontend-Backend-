@@ -1,0 +1,287 @@
+// Variables
+$color-white: #fff;
+$color-text: #202124;
+$color-text-secondary: #5f6368;
+$color-border: #e0e0e0;
+$color-overlay: rgba(0, 0, 0, 0.6);
+$color-hover: rgba(0, 0, 0, 0.08);
+$color-focus: #1a73e8;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+$border-radius: 8px;
+$border-radius-sm: 4px;
+$border-radius-full: 50%;
+
+$transition-fast: 0.2s ease;
+
+$shadow-dialog: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+// Dialog Overlay
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: $spacing-xl;
+  animation: overlayFadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dialog Container
+.collaborator-dialog {
+  background: $color-white;
+  border-radius: $border-radius;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: $shadow-dialog;
+  display: flex;
+  flex-direction: column;
+  animation: dialogSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Dialog Header
+.dialog-header {
+  padding: $spacing-xl $spacing-xl $spacing-md;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 400;
+    color: $color-text;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+}
+
+// Dialog Content
+.dialog-content {
+  padding: $spacing-lg $spacing-xl;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+// Owner Section
+.owner-section {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+  margin-bottom: $spacing-lg;
+}
+
+.owner-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-full;
+  background-color: $color-focus;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $color-white;
+  }
+}
+
+.owner-info {
+  flex: 1;
+}
+
+.owner-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  line-height: 1.5;
+}
+
+// Add Collaborator Section
+.add-collaborator-section {
+  margin-bottom: $spacing-lg;
+}
+
+.collaborator-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid $color-border;
+  outline: none;
+  font-size: 14px;
+  color: $color-text;
+  padding: $spacing-sm 0;
+  font-family: 'Roboto', Arial, sans-serif;
+  transition: border-color $transition-fast;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    border-bottom-color: $color-focus;
+  }
+}
+
+// Collaborators List
+.collaborators-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.collaborator-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm 0;
+  transition: background-color $transition-fast;
+  border-radius: $border-radius-sm;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+}
+
+.collaborator-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-full;
+  background-color: #e8eaed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: $color-text-secondary;
+  }
+}
+
+.collaborator-info {
+  flex: 1;
+}
+
+.collaborator-email {
+  font-size: 14px;
+  color: $color-text;
+  line-height: 1.5;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: $border-radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color $transition-fast;
+  opacity: 0;
+
+  .collaborator-item:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.12);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: $color-text-secondary;
+  }
+}
+
+// Dialog Footer
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl $spacing-lg;
+  border-top: 1px solid $color-border;
+}
+
+.cancel-btn,
+.save-btn {
+  border: none;
+  padding: $spacing-sm $spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: $border-radius-sm;
+  transition: background-color $transition-fast;
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+.cancel-btn {
+  background: none;
+  color: $color-focus;
+
+  &:hover {
+    background-color: rgba(26, 115, 232, 0.08);
+  }
+
+  &:active {
+    background-color: rgba(26, 115, 232, 0.16);
+  }
+}
+
+.save-btn {
+  background-color: $color-focus;
+  color: $color-white;
+
+  &:hover {
+    background-color: #1765cc;
+  }
+
+  &:active {
+    background-color: #1557b0;
+  }
+}
