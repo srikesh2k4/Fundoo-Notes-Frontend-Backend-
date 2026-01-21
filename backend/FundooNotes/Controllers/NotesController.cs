@@ -84,6 +84,18 @@ namespace FundooNotes.Controllers
             return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note updated successfully"));
         }
 
+
+        [HttpPost("{noteId}/labels/{labelId}")]
+[ProducesResponseType(typeof(ApiResponse<NoteResponseDto>), StatusCodes.Status200OK)]
+public async Task<IActionResult> AddLabelToNote(int noteId, int labelId)
+{
+    var userId = GetUserId();
+    _logger.LogInformation("Adding label {LabelId} to note {NoteId}", labelId, noteId);
+
+    var result = await _noteService.AddLabelToNoteAsync(noteId, labelId, userId);
+    return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(result, "Label added successfully"));
+}
+
         /// Delete a note (soft delete)
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
@@ -170,7 +182,22 @@ namespace FundooNotes.Controllers
             return Ok(ApiResponse<NoteResponseDto>.SuccessResponse(note, "Note moved to/from trash"));
         }
 
+        [HttpDelete("{noteId}/labels/{labelId}")]
+[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+public async Task<IActionResult> RemoveLabelFromNote(int noteId, int labelId)
+{
+    var userId = GetUserId();
+    _logger.LogInformation("Removing label {LabelId} from note {NoteId}", labelId, noteId);
 
+    await _noteService.RemoveLabelFromNoteAsync(noteId, labelId, userId);
+    return Ok(ApiResponse.SuccessResponse("Label removed successfully"));
+}
+
+private int GetUserId()
+{
+    var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    return int.Parse(userIdClaim ?? "0");
+}
         /// Get all trashed notes
         [HttpGet("trash")]
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteResponseDto>>), StatusCodes.Status200OK)]

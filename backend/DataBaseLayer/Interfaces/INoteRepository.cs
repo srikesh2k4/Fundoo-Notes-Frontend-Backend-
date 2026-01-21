@@ -13,6 +13,8 @@ namespace DataBaseLayer.Interfaces
         Task<IEnumerable<Note>> SearchAsync(string query, int userId);
         Task<IEnumerable<Note>> GetByLabelIdAsync(int labelId, int userId);
         Task<IEnumerable<Note>> GetCollaboratedNotesAsync(int userId);
+        Task<NoteResponseDto> AddLabelToNoteAsync(int noteId, int labelId, int userId);
+        Task RemoveLabelFromNoteAsync(int noteId, int labelId, int userId); 
         Task AddAsync(Note note);
         Task DeleteAsync(Note note);
         Task DeleteAllTrashedAsync(int userId);

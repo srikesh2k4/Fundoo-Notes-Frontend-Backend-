@@ -13,7 +13,7 @@ export class NoteService {
   private notesSubject = new BehaviorSubject<Note[]>([]);
   public notes$ = this.notesSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpCliexnt) {}
 
   // Get all notes
   getAllNotes(): Observable<Note[]> {
@@ -207,37 +207,37 @@ export class NoteService {
   }
 
   // Add label to note
-  addLabelToNote(noteId: number, labelId: number): Observable<Note> {
-    return this.http.post<ApiResponse<Note>>(`${this.apiUrl}/${noteId}/labels/${labelId}`, {})
-      .pipe(
-        map(response => response.data),
-        tap(updatedNote => {
-          const currentNotes = this.notesSubject.value.map(n =>
-            n.id === noteId ? updatedNote : n
-          );
-          this.notesSubject.next(currentNotes);
-        }),
-        catchError(this.handleError)
-      );
-  }
+addLabelToNote(noteId: number, labelId: number): Observable<Note> {
+  return this.http.post<ApiResponse<Note>>(`${this.apiUrl}/${noteId}/labels/${labelId}`, {})
+    .pipe(
+      map(response => response.data),
+      tap(updatedNote => {
+        const currentNotes = this.notesSubject.value.map(n =>
+          n.id === noteId ? updatedNote : n
+        );
+        this.notesSubject.next(currentNotes);
+      }),
+      catchError(this.handleError)
+    );
+}
 
   // Remove label from note
-  removeLabelFromNote(noteId: number, labelId: number): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${noteId}/labels/${labelId}`)
-      .pipe(
-        map(() => void 0),
-        tap(() => {
-          const currentNotes = this.notesSubject.value.map(n => {
-            if (n.id === noteId && n.labels) {
-              return { ...n, labels: n.labels.filter(l => l.id !== labelId) };
-            }
-            return n;
-          });
-          this.notesSubject.next(currentNotes);
-        }),
-        catchError(this.handleError)
-      );
-  }
+removeLabelFromNote(noteId: number, labelId: number): Observable<void> {
+  return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${noteId}/labels/${labelId}`)
+    .pipe(
+      map(() => void 0),
+      tap(() => {
+        const currentNotes = this.notesSubject.value.map(n => {
+          if (n.id === noteId && n.labels) {
+            return { ...n, labels: n.labels.filter(l => l.id !== labelId) };
+          }
+          return n;
+        });
+        this.notesSubject.next(currentNotes);
+      }),
+      catchError(this.handleError)
+    );
+}
 
   // Copy note
   copyNote(note: Note): Observable<Note> {
