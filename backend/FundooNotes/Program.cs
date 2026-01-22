@@ -14,15 +14,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ========================================
-// 1. CONFIGURATION SETTINGS
-// ========================================
+// Config settings
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
-// ========================================
-// 2. DATABASE CONFIGURATION
-// ========================================
+// Database config
 var connectionString = builder.Configuration.GetConnectionString("FundooConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -35,17 +31,13 @@ builder.Services.AddDbContext<FundooAppDbContext>(options =>
         connectionString,
         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
-// ========================================
-// 3. REPOSITORY REGISTRATION
-// ========================================
+// Repository registration
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<ILabelRepository, LabelRepository>();
 builder.Services.AddScoped<ICollaboratorRepository, CollaboratorRepository>();
 
-// ========================================
-// 4. SERVICE REGISTRATION
-// ========================================
+// Service registration
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Register NoteService with all required dependencies
 builder.Services.AddScoped<INoteService, NoteService>(provider =>
@@ -58,9 +50,7 @@ builder.Services.AddScoped<INoteService, NoteService>(provider =>
 builder.Services.AddScoped<ILabelService, LabelService>();
 builder.Services.AddScoped<ICollaboratorService, CollaboratorService>();
 
-// ========================================
-// 5. HELPER REGISTRATION
-// ========================================
+// Helper registration
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<OtpEmailSender>();
 
