@@ -9,7 +9,8 @@ import { NOTE_COLORS } from '../note-card/note-card';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './take-note.html',
-  styleUrls: ['./take-note.scss']
+  styleUrls: ['./take-note.scss'],
+  styles: [':host { display: block; width: 100%; }']
 })
 export class TakeNoteComponent {
   private noteService = inject(NoteService);
