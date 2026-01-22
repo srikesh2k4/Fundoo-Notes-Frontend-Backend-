@@ -128,7 +128,7 @@ export class NoteCardComponent implements OnInit {
   copyNote(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    
+
     const copyDto: any = {
       title: this.note.title ? `${this.note.title} (Copy)` : undefined,
       content: this.note.content || undefined,
@@ -154,7 +154,7 @@ export class NoteCardComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Failed to update color:', err);
-        // Fallback: update locally anyway to allow user to see change, 
+        // Fallback: update locally anyway to allow user to see change,
         // even if backend is being strict (temporary fix for UX)
         this.note.color = color;
         this.showColorPicker.set(false);
