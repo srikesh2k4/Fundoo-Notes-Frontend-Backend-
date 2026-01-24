@@ -1,13 +1,10 @@
-﻿// ========================================
-// FILE: BusinessLayer/Services/AuthService.cs (FIXED)
-// ========================================
+﻿using System.Security.Cryptography;
 using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces.Services;
 using BusinessLayer.Rules;
 using DataBaseLayer.Entities;
 using DataBaseLayer.Interfaces;
 using ModelLayer.DTOs.Auth;
-using System.Security.Cryptography;
 
 namespace BusinessLayer.Services
 {
@@ -42,7 +39,7 @@ namespace BusinessLayer.Services
                 EmailVerificationToken = otp,
                 EmailVerificationExpiry = DateTime.UtcNow.AddMinutes(10),
                 IsEmailVerified = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
 
             await _userRepository.AddAsync(user);
@@ -59,7 +56,8 @@ namespace BusinessLayer.Services
             if (string.IsNullOrWhiteSpace(otp))
                 throw new ValidationException("OTP is required");
 
-            var user = await _userRepository.GetByEmailAsync(email)
+            var user =
+                await _userRepository.GetByEmailAsync(email)
                 ?? throw new NotFoundException("User not found");
 
             if (user.EmailVerificationToken != otp)
@@ -84,14 +82,17 @@ namespace BusinessLayer.Services
             if (string.IsNullOrWhiteSpace(dto.Password))
                 throw new ValidationException("Password is required");
 
-            var user = await _userRepository.GetByEmailAsync(dto.Email)
+            var user =
+                await _userRepository.GetByEmailAsync(dto.Email)
                 ?? throw new UnauthorizedException("Invalid credentials");
 
             // Check account lockout
             if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
             {
                 var remainingTime = (user.LockoutEnd.Value - DateTime.UtcNow).Minutes;
-                throw new UnauthorizedException($"Account is locked. Try again in {remainingTime} minutes");
+                throw new UnauthorizedException(
+                    $"Account is locked. Try again in {remainingTime} minutes"
+                );
             }
 
             // Verify password
@@ -105,7 +106,9 @@ namespace BusinessLayer.Services
                     user.LockoutEnd = DateTime.UtcNow.AddMinutes(15);
                     user.FailedLoginAttempts = 0;
                     await _userRepository.SaveAsync();
-                    throw new UnauthorizedException("Too many failed login attempts. Account locked for 15 minutes");
+                    throw new UnauthorizedException(
+                        "Too many failed login attempts. Account locked for 15 minutes"
+                    );
                 }
 
                 await _userRepository.SaveAsync();
@@ -114,7 +117,9 @@ namespace BusinessLayer.Services
 
             // Check if email is verified
             if (!user.IsEmailVerified)
-                throw new UnauthorizedException("Email not verified. Please verify your email first");
+                throw new UnauthorizedException(
+                    "Email not verified. Please verify your email first"
+                );
 
             // Reset failed login attempts
             user.FailedLoginAttempts = 0;
@@ -134,7 +139,7 @@ namespace BusinessLayer.Services
                 Email = user.Email,
                 Name = user.Name,
                 RefreshToken = refreshToken,
-                ExpiresIn = 3600
+                ExpiresIn = 3600,
             };
         }
 
@@ -143,7 +148,8 @@ namespace BusinessLayer.Services
             if (string.IsNullOrWhiteSpace(refreshToken))
                 throw new ValidationException("Refresh token is required");
 
-            var user = await _userRepository.GetByRefreshTokenAsync(refreshToken)
+            var user =
+                await _userRepository.GetByRefreshTokenAsync(refreshToken)
                 ?? throw new UnauthorizedException("Invalid refresh token");
 
             if (user.RefreshTokenExpiry < DateTime.UtcNow)
@@ -162,7 +168,7 @@ namespace BusinessLayer.Services
                 Email = user.Email,
                 Name = user.Name,
                 RefreshToken = newRefreshToken,
-                ExpiresIn = 3600
+                ExpiresIn = 3600,
             };
         }
 
@@ -199,7 +205,8 @@ namespace BusinessLayer.Services
             // Validate new password
             UserRules.ValidatePassword(dto.NewPassword);
 
-            var user = await _userRepository.GetByResetTokenAsync(dto.Token)
+            var user =
+                await _userRepository.GetByResetTokenAsync(dto.Token)
                 ?? throw new ValidationException("Invalid or expired reset token");
 
             if (user.PasswordResetExpiry < DateTime.UtcNow)
@@ -219,7 +226,8 @@ namespace BusinessLayer.Services
 
         public async Task LogoutAsync(int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId)
+            var user =
+                await _userRepository.GetByIdAsync(userId)
                 ?? throw new NotFoundException("User not found");
 
             // Invalidate refresh token
@@ -234,7 +242,8 @@ namespace BusinessLayer.Services
             if (string.IsNullOrWhiteSpace(email))
                 throw new ValidationException("Email is required");
 
-            var user = await _userRepository.GetByEmailAsync(email)
+            var user =
+                await _userRepository.GetByEmailAsync(email)
                 ?? throw new NotFoundException("User not found");
 
             if (user.IsEmailVerified)

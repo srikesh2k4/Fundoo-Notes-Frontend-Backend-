@@ -1,6 +1,6 @@
-﻿// ========================================
+﻿
 // FILE: FundooNotes/Middleware/GlobalExceptionMiddleware.cs
-// ========================================
+
 using BusinessLayer.Exceptions;
 using ModelLayer.Responses;
 using System.Net;

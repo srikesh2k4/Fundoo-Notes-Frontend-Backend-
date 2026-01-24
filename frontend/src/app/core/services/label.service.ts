@@ -18,9 +18,7 @@ export class LabelService {
     this.loadLabels();
   }
 
-  /**
-   * Load all labels from backend
-   */
+  // Load all labels from backend
   loadLabels(): void {
     this.http.get<ApiResponse<Label[]>>(`${this.apiUrl}`)
       .pipe(
@@ -32,9 +30,7 @@ export class LabelService {
       .subscribe();
   }
 
-  /**
-   * Get all labels
-   */
+  // Get all labels
   getLabels(): Observable<ApiResponse<Label[]>> {
     return this.http.get<ApiResponse<Label[]>>(`${this.apiUrl}`)
       .pipe(
@@ -45,16 +41,12 @@ export class LabelService {
       );
   }
 
-  /**
-   * Get label by ID
-   */
+  // Get label by ID
   getLabelById(id: number): Observable<ApiResponse<Label>> {
     return this.http.get<ApiResponse<Label>>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * Create a new label
-   */
+  // Create a new label
   createLabel(dto: CreateLabelDto): Observable<ApiResponse<Label>> {
     return this.http.post<ApiResponse<Label>>(`${this.apiUrl}`, dto)
       .pipe(
@@ -62,9 +54,7 @@ export class LabelService {
       );
   }
 
-  /**
-   * Update a label
-   */
+  // Update a label
   updateLabel(id: number, dto: UpdateLabelDto): Observable<ApiResponse<Label>> {
     return this.http.put<ApiResponse<Label>>(`${this.apiUrl}/${id}`, dto)
       .pipe(
@@ -72,9 +62,7 @@ export class LabelService {
       );
   }
 
-  /**
-   * Delete a label
-   */
+  // Delete a label
   deleteLabel(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`)
       .pipe(
@@ -82,9 +70,7 @@ export class LabelService {
       );
   }
 
-  /**
-   * Get current labels value (synchronous)
-   */
+  // Get current labels value (synchronous)
   getCurrentLabels(): Label[] {
     return this.labelsSubject.value;
   }

@@ -1,7 +1,4 @@
-﻿// ========================================
-// FILE: ModelLayer/DTOs/Auth/RegisterRequestDto.cs
-// ========================================
-namespace ModelLayer.DTOs.Auth
+﻿namespace ModelLayer.DTOs.Auth
 {
     public class RegisterRequestDto
     {

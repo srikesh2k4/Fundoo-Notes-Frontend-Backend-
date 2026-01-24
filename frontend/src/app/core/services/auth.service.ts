@@ -56,30 +56,21 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
-  /**
-   * Register a new user
-   */
+   //Register a new user
   register(dto: RegisterDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, dto);
   }
 
-  /**
-   * Verify OTP
-   */
+  //Verify OTP
   verifyOtp(email: string, otp: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/verify-otp`, { email, otp });
   }
-
-  /**
-   * Resend OTP
-   */
+  //Resend OTP
   resendOtp(email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/resend-otp`, { email });
   }
 
-  /**
-   * Login
-   */
+  //Login
   login(dto: LoginDto): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, dto)
       .pipe(
@@ -91,9 +82,7 @@ export class AuthService {
       );
   }
 
-  /**
-   * Logout (returns Observable)
-   */
+  //Logout (returns Observable)
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {})
       .pipe(
@@ -104,24 +93,18 @@ export class AuthService {
       );
   }
 
-  /**
-   * Check if user is logged in
-   */
+  //Check if user is logged in
   isLoggedIn(): boolean {
     return this.hasToken();
   }
 
-  /**
-   * Get access token
-   */
+  //Get access token
   getToken(): string | null {
     if (!this.isBrowser()) return null;
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Set session data
-   */
+  //Set session data
   private setSession(authResult: any): void {
     if (!this.isBrowser()) return;
     localStorage.setItem(this.TOKEN_KEY, authResult.accessToken);
@@ -134,9 +117,7 @@ export class AuthService {
     this.isAuthenticatedSubject.next(true);
   }
 
-  /**
-   * Clear storage
-   */
+  //Clear storage
   clearStorage(): void {
     if (!this.isBrowser()) return;
     localStorage.removeItem(this.TOKEN_KEY);
@@ -145,17 +126,13 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  /**
-   * Check if token exists
-   */
+  //Check if token exists
   private hasToken(): boolean {
     if (!this.isBrowser()) return false;
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Get current user
-   */
+  //Get current user
   getCurrentUser(): any {
     if (!this.isBrowser()) return null;
     const userData = localStorage.getItem(this.USER_KEY);

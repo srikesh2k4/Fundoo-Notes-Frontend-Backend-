@@ -1,4 +1,4 @@
-// ================= VARIABLES =================
+// Variables
 $sidebar-width-collapsed: 80px;
 $sidebar-width-expanded: 280px;
 
@@ -22,7 +22,7 @@ $nav-item-height: 48px;
 $z-index-sidebar: 100;
 $z-index-overlay: 1000;
 
-// ================= SIDEBAR =================
+// Sidebar
 .sidebar {
   width: $sidebar-width-collapsed;
   height: calc(100vh - $header-height);
@@ -58,14 +58,14 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= NAV =================
+// Nav
 .sidebar-nav {
   flex: 1;
   padding: $spacing-sm 0;
   overflow-y: auto;
 }
 
-// ================= NAV ITEM =================
+// Nav Item
 .nav-item {
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= NAV BUTTON =================
+// Nav Button
 .nav-btn {
   background: none;
   border: none;
@@ -132,14 +132,14 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= SIDEBAR EXPANDED NAV BUTTON =================
+// Sidebar Expanded Nav Button
 .sidebar.expanded {
   .nav-btn {
     width: calc(100% - #{$spacing-sm * 2});
   }
 }
 
-// ================= ICON =================
+// Icon
 .nav-icon {
   width: 40px;
   height: 40px;
@@ -164,7 +164,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= TEXT =================
+// Text
 .nav-text {
   font-size: 14px;
   color: var(--text-primary);
@@ -180,7 +180,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= COLLAPSED FIX (IMPORTANT) =================
+// Collapsed Fix
 .sidebar:not(.expanded) {
   .nav-item {
     width: 48px;
@@ -190,12 +190,12 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= DIVIDER - REMOVE BORDERS =================
+// Nav Divider - Remove Borders
 .nav-divider {
   display: none; // Hide all dividers to remove borders
 }
 
-// ================= FOOTER =================
+// Footer
 .sidebar-footer {
   padding: $spacing-lg;
   border: none;
@@ -213,7 +213,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= DIALOG =================
+// Dialog
 .dialog-overlay {
   position: fixed;
   inset: 0;
@@ -307,7 +307,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= LABEL INPUT ROW =================
+// Label Input Row
 .label-input-row {
   display: flex;
   align-items: center;
@@ -367,7 +367,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= LABELS LIST =================
+// Labels List
 .labels-list {
   max-height: 400px;
   overflow-y: auto;
@@ -439,7 +439,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= EDIT LABEL BUTTON =================
+// Edit Label Button
 .nav-btn {
   background: none;
   border: none;
@@ -458,7 +458,7 @@ $z-index-overlay: 1000;
   }
 }
 
-// ================= ACCESSIBILITY =================
+// Accessibility
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

@@ -31,7 +31,7 @@ namespace FundooNotes.Controllers
         )]
         public async Task<IActionResult> GetAll()
         {
-            var userId = User.GetUserId(); // ✅ Use extension method
+            var userId = User.GetUserId(); 
             _logger.LogInformation("Fetching all labels for user {UserId}", userId);
 
             var labels = await _labelService.GetByUserAsync(userId);

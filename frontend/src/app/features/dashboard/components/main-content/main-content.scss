@@ -1,6 +1,4 @@
-// ==============================
-// Variables (Google Keep–like)
-// ==============================
+// Variables
 $sidebar-collapsed: 80px;
 $sidebar-expanded: 280px;
 $header-height: 64px;
@@ -10,9 +8,7 @@ $color-text-secondary: var(--text-secondary);
 $color-border: var(--border-color);
 $color-accent: var(--color-accent);
 
-// ==============================
 // Main Content Area
-// ==============================
 .main-content {
   min-height: calc(100vh - $header-height);
   background-color: var(--bg-primary);
@@ -35,12 +31,7 @@ $color-accent: var(--color-accent);
   }
 }
 
-// ==============================
-// Content Wrapper (Keep-style)
-// ==============================
-// ==============================
-// Content Wrapper (Keep-style)
-// ==============================
+// Content Wrapper
 
 .content-wrapper {
   width: 100%;
@@ -64,9 +55,7 @@ $color-accent: var(--color-accent);
   margin-right: auto;
 }
 
-// ==============================
 // Search Header
-// ==============================
 .search-header {
   padding: 8px 0 16px;
 
@@ -77,9 +66,7 @@ $color-accent: var(--color-accent);
   }
 }
 
-// ==============================
 // Loading State
-// ==============================
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -111,9 +98,7 @@ $color-accent: var(--color-accent);
   }
 }
 
-// ==============================
 // Notes Sections
-// ==============================
 .notes-section {
   margin-top: 24px;
 
@@ -131,12 +116,7 @@ $color-accent: var(--color-accent);
   text-transform: uppercase;
 }
 
-// ==============================
-// Notes Masonry (REAL Google Keep)
-// ==============================
-// ==============================
-// Notes Masonry (REAL Google Keep)
-// ==============================
+// Notes Masonry
 .notes-masonry {
   column-count: 3; // Start with 3 columns for most screens
   column-gap: 16px;
@@ -188,9 +168,7 @@ $color-accent: var(--color-accent);
   }
 }
 
-// ==============================
 // Empty State
-// ==============================
 .empty-state {
   display: flex;
   flex-direction: column;

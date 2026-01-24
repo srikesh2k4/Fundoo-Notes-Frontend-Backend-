@@ -1,7 +1,4 @@
-﻿// ========================================
-// FILE: ModelLayer/Configuration/CorsSettings.cs
-// ========================================
-namespace ModelLayer.Configuration
+﻿namespace ModelLayer.Configuration
 {
     public class CorsSettings
     {

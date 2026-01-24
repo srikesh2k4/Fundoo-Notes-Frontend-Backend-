@@ -1,10 +1,7 @@
-﻿// ========================================
-// FILE: FundooNotes/Helpers/OtpEmailSender.cs
-// ========================================
+﻿using System.Net;
+using System.Net.Mail;
 using Microsoft.Extensions.Options;
 using ModelLayer.Configuration;
-using System.Net;
-using System.Net.Mail;
 
 namespace FundooNotes.Helpers
 {
@@ -25,15 +22,19 @@ namespace FundooNotes.Helpers
             {
                 using var smtpClient = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
                 {
-                    Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password),
-                    EnableSsl = _smtpSettings.EnableSsl
+                    Credentials = new NetworkCredential(
+                        _smtpSettings.UserName,
+                        _smtpSettings.Password
+                    ),
+                    EnableSsl = _smtpSettings.EnableSsl,
                 };
 
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(_smtpSettings.FromEmail, _smtpSettings.FromName),
                     Subject = "Verify Your Email - Fundoo Notes",
-                    Body = $@"
+                    Body =
+                        $@"
                         <html>
                         <body style='font-family: Arial, sans-serif;'>
                             <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
@@ -50,7 +51,7 @@ namespace FundooNotes.Helpers
                             </div>
                         </body>
                         </html>",
-                    IsBodyHtml = true
+                    IsBodyHtml = true,
                 };
 
                 mailMessage.To.Add(toEmail);
@@ -70,15 +71,19 @@ namespace FundooNotes.Helpers
             {
                 using var smtpClient = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
                 {
-                    Credentials = new NetworkCredential(_smtpSettings.UserName, _smtpSettings.Password),
-                    EnableSsl = _smtpSettings.EnableSsl
+                    Credentials = new NetworkCredential(
+                        _smtpSettings.UserName,
+                        _smtpSettings.Password
+                    ),
+                    EnableSsl = _smtpSettings.EnableSsl,
                 };
 
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(_smtpSettings.FromEmail, _smtpSettings.FromName),
                     Subject = "Password Reset - Fundoo Notes",
-                    Body = $@"
+                    Body =
+                        $@"
                         <html>
                         <body style='font-family: Arial, sans-serif;'>
                             <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
@@ -95,7 +100,7 @@ namespace FundooNotes.Helpers
                             </div>
                         </body>
                         </html>",
-                    IsBodyHtml = true
+                    IsBodyHtml = true,
                 };
 
                 mailMessage.To.Add(toEmail);

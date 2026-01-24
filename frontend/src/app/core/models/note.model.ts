@@ -1,16 +1,16 @@
 export interface Note {
   id: number;
-  userId: number;  // ✅ ADD: Missing from your model
-  title: string | null;  // ✅ FIX: Should be nullable
-  content: string | null;  // ✅ FIX: Should be nullable
+  userId: number;  
+  title: string | null;  
+  content: string | null; 
   color: string;
   isPinned: boolean;
   isArchived: boolean;
-  isDeleted: boolean;  // ✅ FIX: Remove optional
+  isDeleted: boolean;  
   createdAt: Date;
   updatedAt?: Date;
-  deletedAt?: Date;  // ✅ ADD: Missing
-  labels: LabelDto[];  // ✅ FIX: Remove optional, use empty array default
+  deletedAt?: Date;  
+  labels: LabelDto[];  
 }
 
 export interface LabelDto {
@@ -22,7 +22,7 @@ export interface CreateNoteDto {
   title?: string;
   content?: string;
   color?: string;
-  labelIds?: number[];  // ✅ ADD: Support label IDs on creation
+  labelIds?: number[]; 
 }
 
 export interface UpdateNoteDto {
@@ -32,7 +32,7 @@ export interface UpdateNoteDto {
   isPinned?: boolean;
   isArchived?: boolean;
   isDeleted?: boolean;
-  labelIds?: number[];  // ✅ ADD: Support updating labels
+  labelIds?: number[]; 
 }
 
 export interface UpdateNoteColorDto {
